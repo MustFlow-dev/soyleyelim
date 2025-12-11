@@ -1,0 +1,381 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İş Ortağımız Ol | Söyleyelim</title>
+    
+    <link rel="icon" href="https://ui-avatars.com/api/?name=S&background=ff6b00&color=fff&size=128&font-size=0.6&rounded=true" type="image/png">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #fff8f3; }
+        
+        /* Navbar */
+        .navbar { background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .navbar-brand { color: #ff6b00 !important; font-weight: 800; font-size: 1.5rem; }
+
+        /* Hero */
+        .hero-section {
+            background: linear-gradient(135deg, #ff9f43 0%, #ff6b00 100%);
+            color: white; padding: 80px 0 120px;
+            border-radius: 0 0 50% 50% / 40px;
+            position: relative; overflow: hidden;
+        }
+        .hero-content { position: relative; z-index: 2; }
+        
+        .wave-bg {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            height: 100px; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23fff8f3" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,128C960,128,1056,192,1152,208C1248,224,1344,192,1392,176L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover; background-repeat: no-repeat;
+        }
+
+        /* Kayıt Formu */
+        .register-card {
+            background: white; border-radius: 20px; border: none;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            margin-top: -80px; position: relative; z-index: 10; overflow: hidden;
+        }
+
+        .btn-register {
+            background-color: #ff6b00; color: white; border: none;
+            padding: 15px; border-radius: 12px; font-weight: bold; font-size: 1.1rem;
+            width: 100%; transition: 0.3s;
+        }
+        .btn-register:hover { background-color: #e65100; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3); color: white;}
+
+        /* Avantajlar */
+        .benefit-card {
+            background: white; padding: 30px; border-radius: 20px;
+            text-align: center; transition: 0.3s; height: 100%; border: 1px solid #eee;
+        }
+        .benefit-card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); border-color: #ff6b00; }
+        .icon-box {
+            width: 80px; height: 80px; background: #fff3e0; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px; color: #ff6b00; font-size: 2rem;
+        }
+
+        /* Süreç Kartları */
+        .process-step { position: relative; text-align: center; padding: 20px; }
+        .step-number {
+            width: 40px; height: 40px; background: #ff6b00; color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; margin: 0 auto 15px; position: relative; z-index: 2;
+            box-shadow: 0 0 0 5px #fff8f3;
+        }
+        .step-card {
+            background: white; border-radius: 15px; padding: 30px 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.3s; height: 100%;
+            border-bottom: 4px solid transparent;
+        }
+        .step-card:hover { transform: translateY(-5px); border-bottom-color: #ff6b00; }
+        .step-icon { font-size: 2.5rem; color: #2d3436; margin-bottom: 15px; transition: 0.3s; }
+        .step-card:hover .step-icon { color: #ff6b00; transform: scale(1.1); }
+        
+        @media (min-width: 992px) {
+            .process-line::before {
+                content: ''; position: absolute; top: 40px; left: 0; width: 100%; height: 2px;
+                background: repeating-linear-gradient(to right, #ddd, #ddd 10px, transparent 10px, transparent 20px);
+                z-index: 1;
+            }
+        }
+
+        /* SSS */
+        .accordion-item { border: none; margin-bottom: 15px; border-radius: 15px !important; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+        .accordion-button:not(.collapsed) { background-color: #fff3e0; color: #ff6b00; box-shadow: none; }
+        .accordion-button:focus { box-shadow: none; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar py-3 sticky-top">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand" href="{% url 'index' %}">
+                Söyleyelim <span class="text-dark fs-6 ms-2 fw-normal">| İş Ortaklığı</span>
+            </a>
+            <a href="{% url 'index' %}" class="btn btn-outline-dark rounded-pill px-4">Anasayfaya Dön</a>
+        </div>
+    </nav>
+
+    <section class="hero-section text-center">
+        <div class="container hero-content">
+            <h1 class="display-4 fw-bold mb-3">İşinizi Büyütmenin En Lezzetli Yolu</h1>
+            <p class="lead opacity-90 mb-0">Binlerce yeni müşteriye ulaşın, cirosunuza lezzet katın. Söyleyelim ailesine katılmak tamamen ücretsiz!</p>
+        </div>
+        <div class="wave-bg"></div>
+    </section>
+
+    <div class="container pb-5">
+        <div class="row justify-content-center">
+            
+            <div class="col-lg-5 mb-5">
+                <div class="register-card p-4">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-success text-center border-0 shadow-sm mb-4">
+                                <i class="fas fa-check-circle fa-2x d-block mb-2"></i>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <div class="text-center mb-4">
+                        <h3 class="fw-bold">Hemen Başvur</h3>
+                        <p class="text-muted small">Formu doldurun, 24 saat içinde sizi arayalım.</p>
+                    </div>
+                    
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="form-floating mb-3">
+                            <input type="text" name="restoran_adi" class="form-control" placeholder="Restoran Adı" required>
+                            <label>Restoran Adı</label>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" name="yetkili_adi" class="form-control" placeholder="Adınız" required>
+                                    <label>Yetkili Adı</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="tel" name="telefon" class="form-control" placeholder="Telefon" required>
+                                    <label>Telefon No</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="email" name="email" class="form-control" placeholder="E-posta" required>
+                            <label>E-posta Adresi</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <select name="sehir" class="form-select" required>
+                                <option value="" selected>Şehir Seçin...</option>
+                                <option value="İstanbul">İstanbul</option>
+                                <option value="Ankara">Ankara</option>
+                                <option value="İzmir">İzmir</option>
+                                <option value="Diğer">Diğer</option>
+                            </select>
+                            <label>Şehir</label>
+                        </div>
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" name="kvkk" id="kvkk" required>
+                            <label class="form-check-label small text-muted" for="kvkk">
+                                <a href="#" class="text-decoration-none text-dark fw-bold">Kişisel Verilerin Korunması</a> metnini okudum, onaylıyorum.
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-register shadow">
+                            Başvurumu Gönder <i class="fas fa-paper-plane ms-2"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-lg-6 offset-lg-1 mt-lg-5 pt-lg-4">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="benefit-card">
+                            <div class="icon-box"><i class="fas fa-users"></i></div>
+                            <h5 class="fw-bold">Daha Fazla Müşteri</h5>
+                            <p class="text-muted small">Semtinizdeki binlerce kullanıcıya anında ulaşın.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="benefit-card">
+                            <div class="icon-box"><i class="fas fa-chart-line"></i></div>
+                            <h5 class="fw-bold">Ciro Artışı</h5>
+                            <p class="text-muted small">Online siparişlerle gelirinizi artırın.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="benefit-card">
+                            <div class="icon-box"><i class="fas fa-bullhorn"></i></div>
+                            <h5 class="fw-bold">Ücretsiz Reklam</h5>
+                            <p class="text-muted small">Dijital dünyada görünür olun.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="benefit-card">
+                            <div class="icon-box"><i class="fas fa-headset"></i></div>
+                            <h5 class="fw-bold">7/24 Destek</h5>
+                            <p class="text-muted small">İş ortağı destek hattımız her an yanınızda.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="my-5 py-4">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold display-6">Adım Adım Başarı Yolculuğu</h2>
+                <p class="text-muted">Söyleyelim ile kazanmaya başlamak işte bu kadar kolay.</p>
+            </div>
+            
+            <div class="row g-4 process-line position-relative">
+                <div class="col-md-6 col-lg-3 process-step">
+                    <div class="step-number">1</div>
+                    <div class="step-card">
+                        <i class="fas fa-mobile-alt step-icon"></i>
+                        <h5 class="fw-bold">Sipariş Gelir</h5>
+                        <p class="text-muted small mb-0">Müşteriler Söyleyelim üzerinden restoranınızı görür ve sipariş verir.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 process-step">
+                    <div class="step-number">2</div>
+                    <div class="step-card">
+                        <i class="fas fa-fire-burner step-icon"></i>
+                        <h5 class="fw-bold">Hazırlık Başlar</h5>
+                        <p class="text-muted small mb-0">Siparişi tek tıkla onaylarsınız. Mutfağınızda lezzet yolculuğu başlar.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 process-step">
+                    <div class="step-number">3</div>
+                    <div class="step-card">
+                        <i class="fas fa-motorcycle step-icon"></i>
+                        <h5 class="fw-bold">Yola Çıkar</h5>
+                        <p class="text-muted small mb-0">İster kendi kuryenizle, isterseniz Söyleyelim Kurye ile ulaştırırsınız.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 process-step">
+                    <div class="step-number">4</div>
+                    <div class="step-card">
+                        <i class="fas fa-coins step-icon"></i>
+                        <h5 class="fw-bold">Kazancınız Artar</h5>
+                        <p class="text-muted small mb-0">Mutlu müşteriler puan verir, sıralamanız yükselir. Kazancınız artar.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center mt-5">
+            <div class="col-lg-9">
+                <div class="text-center mb-5">
+                    <h2 class="fw-bold text-dark">Aklınıza Takılanlar</h2>
+                    <p class="text-muted">Tüm sorularınızın cevaplarını burada bulabilirsiniz.</p>
+                </div>
+
+                <div class="accordion" id="faqAccordion">
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                                <i class="fas fa-question-circle me-2 text-warning"></i> Neden Söyleyelim ile iş ortağı olmalıyım?
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-muted">
+                                Söyleyelim, işletmelerin satışlarını artırmasına ve yeni müşterilere ulaşmasına yardımcı olur. İş ortaklığımız sayesinde işletmenizi, sipariş vermek isteyen binlerce yeni müşteriyle buluşturabilir ve cironuzu katlayabilirsiniz.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                                <i class="fas fa-clipboard-list me-2 text-warning"></i> İş ortağı olmak için hangi belgelere ihtiyacım var?
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-muted">
+                                Başvuru sürecini hızlandırmak için sadece <strong>Vergi Levhası</strong>, <strong>İmza Sirküleri</strong> ve <strong>İşletme Yetkilisi Kimlik Fotokopisi</strong> yeterlidir. Diğer detayları satış temsilcilerimiz sizinle iletişime geçerek tamamlayacaktır.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingThree">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree">
+                                <i class="fas fa-money-bill-wave me-2 text-warning"></i> Ödemelerimi ne zaman alırım?
+                            </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-muted">
+                                Online kredi kartı ile yapılan ödemeler, komisyon oranları düşüldükten sonra <strong>her hafta Çarşamba günü</strong> belirttiğiniz banka hesabına otomatik olarak yatırılır. Nakit siparişlerin geliri zaten anında kasanızdadır.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingFour">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour">
+                                <i class="fas fa-motorcycle me-2 text-warning"></i> Kendi kuryemi kullanabilir miyim?
+                            </button>
+                        </h2>
+                        <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-muted">
+                                Kesinlikle! İsterseniz kendi kuryelerinizle teslimat yapabilir (bu durumda komisyon oranınız daha düşük olur), isterseniz de Söyleyelim'in profesyonel kurye ağından (VALE) faydalanabilirsiniz. Seçim tamamen sizin!
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingFive">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive">
+                                <i class="fas fa-percent me-2 text-warning"></i> Komisyon oranları nedir?
+                            </button>
+                        </h2>
+                        <div id="collapseFive" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-muted">
+                                Komisyon oranları; restoranınızın bulunduğu bölgeye, teslimat tipine (Kendi Kuryen / Söyleyelim Kurye) ve sipariş hacmine göre değişiklik göstermektedir. Başvurunuzu yaptıktan sonra satış temsilcimiz size özel en uygun teklifi sunacaktır.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingSix">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix">
+                                <i class="fas fa-tablet-alt me-2 text-warning"></i> Sipariş almak için cihaza ihtiyacım var mı?
+                            </button>
+                        </h2>
+                        <div id="collapseSix" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-muted">
+                                Siparişleri yönetmek için akıllı telefon, tablet veya bilgisayar kullanabilirsiniz. Eğer cihazınız yoksa, Söyleyelim olarak iş ortaklarımıza özel uygun koşullarla tablet temini ve yazıcı desteği sağlıyoruz.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingSeven">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeven">
+                                <i class="fas fa-utensils me-2 text-warning"></i> Menü fiyatlarımı kendim belirleyebilir miyim?
+                            </button>
+                        </h2>
+                        <div id="collapseSeven" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-muted">
+                                Evet, menünüzdeki ürünleri ve fiyatları dilediğiniz gibi belirleyebilirsiniz. İş Ortağı Paneli üzerinden anlık olarak fiyat güncellemesi yapabilir, ürün ekleyip çıkarabilirsiniz.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingEight">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEight">
+                                <i class="fas fa-file-signature me-2 text-warning"></i> Üyelik iptali veya dondurma yapabilir miyim?
+                            </button>
+                        </h2>
+                        <div id="collapseEight" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-muted">
+                                Elbette. Herhangi bir taahhüt zorunluluğumuz yoktur. Tadilat, tatil veya farklı sebeplerle restoranınızı dilediğiniz zaman "Kapalı" moda alabilir veya iş ortaklığınızı herhangi bir ceza ödemeden sonlandırabilirsiniz.
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        </div>
+
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0 opacity-50">&copy; 2025 Söyleyelim. İş Ortaklığı Programı.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

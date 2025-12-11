@@ -65,3 +65,21 @@ class Secenek(models.Model):
 
     def __str__(self):
         return f"{self.isim} (+{self.fiyat} TL)"
+    
+    # Mevcut kodların altına ekle:
+
+class RestoranBasvuru(models.Model):
+    restoran_adi = models.CharField(max_length=100)
+    yetkili_adi = models.CharField(max_length=100)
+    telefon = models.CharField(max_length=20)
+    email = models.EmailField()
+    sehir = models.CharField(max_length=50)
+    kvkk_onayi = models.BooleanField(default=False)
+    basvuru_tarihi = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.restoran_adi} - {self.yetkili_adi}"
+
+    class Meta:
+        verbose_name = "Restoran Başvurusu"
+        verbose_name_plural = "Restoran Başvuruları"

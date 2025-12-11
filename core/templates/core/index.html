@@ -13,11 +13,26 @@
     
     <style>
         :root { --primary-color: #ff6b00; --dark-bg: #2d3436; }
-        body { background-color: #fff3e0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #fff3e0; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; min-height: 100vh; }
         
         /* Navbar */
         .navbar { background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .navbar-brand { color: var(--primary-color) !important; font-weight: 800; letter-spacing: -1px; }
+
+        /* Yeni Eklenen Partner Linki Stili */
+        .nav-link-partner { 
+            color: #ff6b00 !important; 
+            font-weight: 700; 
+            text-decoration: none; 
+            margin-right: 10px;
+            transition: all 0.3s;
+        }
+        .nav-link-partner:hover { 
+            color: #e65100 !important; 
+            background-color: #fff3e0;
+            padding: 5px 10px;
+            border-radius: 10px;
+        }
 
         /* Hero Banner */
         .hero-section {
@@ -69,10 +84,10 @@
             margin: 0 auto 5px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-size: 20px; color: var(--dark-bg);
         }
 
-        /* --- RESTORAN KARTLARI --- */
+        /* --- RESTORAN KARTLARI (YUVARLAK) --- */
         .restaurant-card {
             border: none; 
-            border-radius: 35px;
+            border-radius: 35px; /* Yuvarlak Köşeler */
             background: white;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             overflow: hidden; height: 100%; text-decoration: none; display: block; color: inherit;
@@ -102,11 +117,18 @@
             <a class="navbar-brand fs-3" href="{% url 'index' %}">
                 Söyleyelim
             </a>
+            
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav gap-3 align-items-center">
+                    
+                    <li class="nav-item">
+                        <a class="nav-link-partner" href="{% url 'partner' %}">Restoran Sahibi Ol</a>
+                    </li>
+                    
                     {% if user.is_authenticated %}
                         <li class="nav-item fw-bold text-secondary"><i class="fas fa-user-circle me-1"></i> {{ user.username }}</li>
                         <li class="nav-item"><a class="btn btn-outline-danger btn-sm px-4 rounded-pill" href="{% url 'cikis' %}">Çıkış</a></li>
