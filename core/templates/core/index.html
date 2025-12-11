@@ -19,19 +19,25 @@
         .navbar { background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .navbar-brand { color: var(--primary-color) !important; font-weight: 800; letter-spacing: -1px; }
 
-        /* Yeni Eklenen Partner Linki Stili */
+        /* --- GÜNCELLENEN PARTNER BUTONU STİLİ --- */
         .nav-link-partner { 
-            color: #ff6b00 !important; 
+            color: #ff6b00 !important;       /* Yazı Rengi: Turuncu */
+            background-color: white;         /* Arka Plan: Beyaz */
+            border: 2px solid #ff6b00;       /* Çerçeve: Turuncu */
+            padding: 8px 25px;               /* İç Boşluk */
+            border-radius: 50px;             /* Yuvarlak Kenarlar */
             font-weight: 700; 
             text-decoration: none; 
-            margin-right: 10px;
-            transition: all 0.3s;
+            transition: all 0.3s ease;       /* Yumuşak Geçiş */
+            display: inline-block;
         }
+        
+        /* Mouse üzerine gelince */
         .nav-link-partner:hover { 
-            color: #e65100 !important; 
-            background-color: #fff3e0;
-            padding: 5px 10px;
-            border-radius: 10px;
+            color: white !important;         /* Yazı Rengi: Beyaz */
+            background-color: #ff6b00;       /* Arka Plan: Turuncu */
+            box-shadow: 0 5px 15px rgba(255, 107, 0, 0.3); /* Hafif gölge */
+            transform: translateY(-2px);     /* Çok hafif yukarı kalkma efekti */
         }
 
         /* Hero Banner */
@@ -122,13 +128,15 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                <ul class="navbar-nav gap-3 align-items-center">
-                    
+            <div class="collapse navbar-collapse" id="navbarNav">
+                
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link-partner" href="{% url 'partner' %}">Restoran Sahibi Ol</a>
                     </li>
-                    
+                </ul>
+                
+                <ul class="navbar-nav gap-3 align-items-center">
                     {% if user.is_authenticated %}
                         <li class="nav-item fw-bold text-secondary"><i class="fas fa-user-circle me-1"></i> {{ user.username }}</li>
                         <li class="nav-item"><a class="btn btn-outline-danger btn-sm px-4 rounded-pill" href="{% url 'cikis' %}">Çıkış</a></li>
@@ -137,6 +145,7 @@
                         <li class="nav-item"><a class="btn btn-primary-custom btn-sm" href="{% url 'kayit' %}">Kayıt Ol</a></li>
                     {% endif %}
                 </ul>
+
             </div>
         </div>
     </nav>
