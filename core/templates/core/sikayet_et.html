@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorun Bildir | İstegelsin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        
+        .complain-card { 
+            max-width: 500px; width: 100%; border: none; border-radius: 20px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1); overflow: hidden; 
+            opacity: 0; animation: slideDown 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+        }
+
+        @keyframes slideDown {
+            0% { opacity: 0; transform: translateY(-50px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .header-bg { background: linear-gradient(135deg, #ff6b6b 0%, #ee5253 100%); padding: 30px; text-align: center; color: white; }
+        
+        .form-floating > .form-control:focus ~ label { color: #ee5253; }
+        .form-floating > .form-control:focus { border-color: #ee5253; box-shadow: 0 0 0 0.25rem rgba(238, 82, 83, 0.25); }
+
+        .btn-send { background-color: #ee5253; color: white; border: none; border-radius: 12px; padding: 12px; font-weight: bold; width: 100%; transition: 0.3s; }
+        .btn-send:hover { background-color: #d63031; transform: translateY(-2px); color: white;}
+
+        /* Başarı Ekranı Animasyonu */
+        .success-box { text-align: center; animation: popIn 0.5s ease-out; }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="container p-3">
+        <div class="card complain-card mx-auto">
+            
+            {% if basarili %}
+            <div class="card-body p-5 success-box">
+                <div class="mb-4 text-success">
+                    <i class="fas fa-check-circle fa-5x"></i>
+                </div>
+                <h3 class="fw-bold text-dark">Bildiriminiz Alındı!</h3>
+                <p class="text-muted">Geri bildiriminiz için teşekkür ederiz. İlgili restoran uyarılacaktır.</p>
+                <a href="{% url 'restoran_detay' restoran.id %}" class="btn btn-outline-dark rounded-pill px-4 mt-3">
+                    Restorana Geri Dön
+                </a>
+            </div>
+
+            {% else %}
+            <div class="header-bg">
+                <i class="fas fa-headset fa-3x mb-3"></i>
+                <h4 class="fw-bold">Sorun Bildir</h4>
+                <p class="mb-0 opacity-75">{{ restoran.isim }} ile ilgili probleminiz neydi?</p>
+            </div>
+
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="form-floating mb-3">
+                        <input type="text" name="ad_soyad" class="form-control" placeholder="Adınız" value="{{ user.username }}">
+                        <label>Adınız Soyadınız (İsteğe Bağlı)</label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <select name="konu" class="form-select" required>
+                            <option value="" selected disabled>Bir konu seçin...</option>
+                            <option value="teslimat">Sipariş gelmedi / Çok geç kaldı</option>
+                            <option value="lezzet">Yemek soğuk / Lezzetsiz</option>
+                            <option value="davranis">Kurye / Personel davranışı</option>
+                            <option value="diger">Diğer</option>
+                        </select>
+                        <label>Şikayet Konusu</label>
+                    </div>
+
+                    <div class="form-floating mb-4">
+                        <textarea name="mesaj" class="form-control" placeholder="Detaylar" style="height: 120px" required></textarea>
+                        <label>Detayları yazın...</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-send shadow-sm">
+                        <i class="fas fa-paper-plane me-2"></i> Şikayeti Gönder
+                    </button>
+                    
+                    <div class="text-center mt-3">
+                        <a href="{% url 'restoran_detay' restoran.id %}" class="text-secondary small text-decoration-none">Vazgeç</a>
+                    </div>
+                </form>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+</body>
+</html>

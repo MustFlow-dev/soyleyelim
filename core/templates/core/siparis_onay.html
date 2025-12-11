@@ -1,0 +1,139 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sipariş Onayı | İstegelsin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        
+        /* KART TASARIMI VE ANİMASYONU */
+        .confirm-card { 
+            max-width: 500px; width: 100%; border: none; border-radius: 20px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1); overflow: hidden; 
+            opacity: 0; /* Başlangıçta görünmez */
+            animation: slideIn 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards; 
+        }
+
+        /* CARD GİRİŞ ANİMASYONU */
+        @keyframes slideIn {
+            0% { opacity: 0; transform: translateY(-100px) scale(0.9); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .header-bg { background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%); padding: 30px; text-align: center; color: white; }
+        
+        /* İKON ANİMASYONU */
+        .success-icon { animation: popIn 0.5s ease-out 0.6s both; }
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            80% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .status-bar { height: 8px; border-radius: 4px; background-color: #e9ecef; overflow: hidden; margin-top: 5px; }
+        
+        /* ÇUBUK DOLMA ANİMASYONU */
+        .status-fill { 
+            height: 100%; background-color: #ff6b00; 
+            width: 0%; 
+            border-radius: 4px;
+            animation: fillBar 1.5s ease-out 0.8s forwards; 
+        }
+        @keyframes fillBar {
+            to { width: 70%; } 
+        }
+
+        .btn-call { background-color: #27ae60; color: white; font-size: 1.2rem; font-weight: bold; padding: 15px; border-radius: 15px; transition: 0.3s; width: 100%; border: none; text-decoration: none; display: block; text-align: center;}
+        .btn-call:hover { background-color: #219150; transform: scale(1.02); color: white;}
+        
+        .btn-complain { color: #e74c3c; font-weight: 600; text-decoration: none; font-size: 0.9rem; }
+        .btn-complain:hover { text-decoration: underline; color: #c0392b; }
+    </style>
+</head>
+<body>
+
+    <div class="container p-3">
+        <div class="card confirm-card mx-auto">
+            <div class="header-bg">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle fa-4x mb-3"></i>
+                </div>
+                <h3 class="fw-bold">Sipariş Hazırlığı</h3>
+                <p class="mb-0 opacity-75">Seçiminiz: <strong>{{ yemek.isim }}</strong></p>
+            </div>
+
+            <div class="card-body p-0">
+                
+                <div class="bg-white border-bottom p-4">
+                    <h5 class="fw-bold border-bottom pb-2 mb-3 text-secondary">
+                        <i class="fas fa-receipt me-2"></i>Sipariş Özeti
+                    </h5>
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <span><strong>{{ yemek.isim }}</strong></span>
+                        <span>{{ yemek.fiyat }} ₺</span>
+                    </div>
+
+                    {% for ekstra in ekstralar %}
+                    <div class="d-flex justify-content-between text-muted small mb-1">
+                        <span>+ {{ ekstra.isim }}</span>
+                        <span>{{ ekstra.fiyat }} ₺</span>
+                    </div>
+                    {% endfor %}
+
+                    <div class="d-flex justify-content-between mt-3 pt-2 border-top bg-light rounded p-2">
+                        <span class="fs-5 fw-bold text-dark">TOPLAM TUTAR</span>
+                        <span class="fs-4 fw-bold text-success">{{ toplam_fiyat }} ₺</span>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-light">
+                    <div class="text-center mb-4">
+                        <h5 class="fw-bold text-dark">{{ restoran.isim }}</h5>
+                        <p class="text-muted small">{{ restoran.aciklama|truncatechars:50 }}</p>
+                    </div>
+
+                    <div class="bg-white p-3 rounded mb-4 border shadow-sm">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="fw-bold small text-secondary">Restoran Yoğunluğu</span>
+                            <span class="fw-bold small text-warning">Orta Seviye</span>
+                        </div>
+                        <div class="status-bar">
+                            <div class="status-fill"></div> </div>
+                        <small class="text-muted mt-2 d-block"><i class="far fa-clock me-1"></i> Tahmini Bağlanma Süresi: <strong>1 dk</strong></small>
+                    </div>
+
+                    <a href="tel:{{ restoran.telefon }}" class="btn btn-call shadow-sm mb-3">
+                        <i class="fas fa-phone-alt me-2"></i> {{ restoran.telefon }} Ara
+                    </a>
+
+                    <p class="text-center text-muted small">
+                        Butona bastığınızda arama ekranınız açılacaktır.
+                    </p>
+
+                    <hr class="my-4">
+
+                    <div class="text-center">
+                        <p class="small text-muted mb-2">Restoran cevap vermiyor mu veya bir sorun mu var?</p>
+                        <a href="{% url 'sikayet_et' restoran.id %}" class="btn-complain">
+                            <i class="fas fa-exclamation-circle me-1"></i> Şikayette Bulun
+                        </a>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <a href="{% url 'restoran_detay' restoran.id %}" class="text-secondary small text-decoration-none">
+                            Vazgeç ve Menüye Dön
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
