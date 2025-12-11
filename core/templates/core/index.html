@@ -4,13 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>İstegelsin | Kapındaki Lezzet</title>
+    <title>Söyleyelim | Kapındaki Lezzet</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root { --primary-color: #ff6b00; --dark-bg: #2d3436; }
-        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
+        /* Arka plan rengi hafif turuncu yapıldı */
+        body { background-color: #fff3e0; font-family: 'Segoe UI', sans-serif; }
         
         /* Navbar */
         .navbar { background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
@@ -20,27 +21,54 @@
         .hero-section {
             background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
             background-size: cover; background-position: center;
-            height: 400px; display: flex; align-items: center; justify-content: center;
-            color: white; border-radius: 0 0 30px 30px; margin-bottom: 40px;
+            height: 350px; display: flex; align-items: center; justify-content: center;
+            color: white; border-radius: 0 0 30px 30px; margin-bottom: 30px;
         }
         .search-box input { border-radius: 50px 0 0 50px; border: none; padding: 15px 30px; }
         .search-box button { border-radius: 0 50px 50px 0; background-color: var(--primary-color); border: none; padding: 15px 30px; font-weight: bold; color: white;}
 
-        /* Mobil Uygulama Banner (YENİ EKLENDİ) */
+        /* Mobil Uygulama Banner */
         .app-banner {
             background: linear-gradient(135deg, #ff9f43 0%, #ff6b00 100%);
-            border-radius: 20px; padding: 30px; margin: 40px 0; color: white;
+            border-radius: 20px; padding: 20px; margin: 20px 0; color: white;
             position: relative; overflow: hidden;
         }
-        .app-badges img { height: 40px; margin-right: 10px; cursor: pointer; border: 1px solid white; border-radius: 5px; }
+
+        /* --- FİLTRE SIDEBAR --- */
+        .filter-sidebar {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+            position: sticky;
+            top: 100px;
+            border: 1px solid #f1f1f1;
+        }
+        .filter-title { font-weight: 700; color: #2d3436; margin-bottom: 15px; font-size: 1.1rem; }
+        
+        /* Checkbox ve Radio Butonları Özelleştirme */
+        .form-check-input:checked { 
+            background-color: var(--primary-color); 
+            border-color: var(--primary-color); 
+        }
+        .form-check-input:focus { 
+            box-shadow: none !important;
+            border-color: var(--primary-color); 
+        }
+        .form-check-label { color: #636e72; font-weight: 500; cursor: pointer; }
+        .form-check-label:hover { color: var(--primary-color); }
+        
+        .cuisine-list { max-height: 400px; overflow-y: auto; padding-right: 5px; }
+        .cuisine-list::-webkit-scrollbar { width: 5px; }
+        .cuisine-list::-webkit-scrollbar-thumb { background: #ddd; border-radius: 10px; }
 
         /* Kategoriler */
-        .category-item { text-align: center; cursor: pointer; transition: transform 0.2s; min-width: 90px; }
+        .category-item { text-align: center; cursor: pointer; transition: transform 0.2s; min-width: 80px; }
         .category-item:hover { transform: translateY(-5px); }
         .cat-icon { 
-            width: 70px; height: 70px; background: white; border-radius: 50%; 
+            width: 60px; height: 60px; background: white; border-radius: 50%; 
             display: flex; align-items: center; justify-content: center; 
-            margin: 0 auto 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-size: 25px; color: var(--dark-bg);
+            margin: 0 auto 5px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-size: 20px; color: var(--dark-bg);
         }
 
         /* Restoran Kartları */
@@ -51,19 +79,14 @@
         }
         .restaurant-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
         
-        .card-img-wrapper { height: 200px; overflow: hidden; position: relative; }
+        .card-img-wrapper { height: 180px; overflow: hidden; position: relative; }
         .card-img-top { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
         .restaurant-card:hover .card-img-top { transform: scale(1.1); } 
 
         .badge-rating { position: absolute; top: 15px; right: 15px; background: white; padding: 5px 12px; border-radius: 20px; font-weight: bold; color: #27ae60; box-shadow: 0 2px 5px rgba(0,0,0,0.2); font-size: 0.8rem; }
         
-        .card-body { padding: 20px; }
+        .card-body { padding: 15px; }
         .rest-name { font-weight: 700; font-size: 1.1rem; color: #2d3436; margin-bottom: 5px; }
-        .rest-desc { 
-            color: #636e72; font-size: 0.9rem; 
-            display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2;
-            -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 10px; 
-        }
         .delivery-free { color: #27ae60; font-size: 0.85rem; font-weight: 700; }
 
         /* Butonlar */
@@ -76,7 +99,7 @@
 
     <nav class="navbar navbar-expand-lg sticky-top py-3">
         <div class="container">
-            <a class="navbar-brand fs-3" href="{% url 'index' %}"><i class="fas fa-motorcycle me-2"></i>İstegelsin</a>
+            <a class="navbar-brand fs-3" href="{% url 'index' %}"><i class="fas fa-motorcycle me-2"></i>Söyleyelim</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -96,8 +119,7 @@
 
     <div class="hero-section container-fluid">
         <div class="container text-center">
-            <h1 class="display-4 fw-bold mb-3">Canın ne çekiyor?</h1>
-            <p class="fs-5 mb-4">Mahallendeki en iyi restoranlar kapına gelsin.</p>
+            <h1 class="display-5 fw-bold mb-3">Canın ne çekiyor?</h1>
             <div class="row justify-content-center">
                 <div class="col-md-8">
                     <form class="d-flex search-box shadow-lg">
@@ -109,8 +131,8 @@
         </div>
     </div>
 
-    <div class="container">
-        <div class="d-flex justify-content-between overflow-auto gap-4 py-3 mb-4">
+    <div class="container mb-4">
+        <div class="d-flex justify-content-between overflow-auto gap-4 py-3">
             <div class="category-item"><div class="cat-icon"><i class="fas fa-hamburger"></i></div><span class="fw-bold text-secondary small">Burger</span></div>
             <div class="category-item"><div class="cat-icon"><i class="fas fa-pizza-slice"></i></div><span class="fw-bold text-secondary small">Pizza</span></div>
             <div class="category-item"><div class="cat-icon"><i class="fas fa-drumstick-bite"></i></div><span class="fw-bold text-secondary small">Tavuk</span></div>
@@ -118,63 +140,155 @@
             <div class="category-item"><div class="cat-icon"><i class="fas fa-coffee"></i></div><span class="fw-bold text-secondary small">Tatlı</span></div>
             <div class="category-item"><div class="cat-icon"><i class="fas fa-leaf"></i></div><span class="fw-bold text-secondary small">Sağlıklı</span></div>
         </div>
+    </div>
 
-        <div class="app-banner shadow">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h2 class="fw-bold mb-2">İstegelsin Cebinde!</h2>
-                    <p class="mb-3 opacity-90">Uygulamayı indir, sana özel %50'ye varan indirimleri kaçırma.</p>
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-dark d-flex align-items-center px-3 py-2 rounded-3 border-0">
-                            <i class="fab fa-apple fa-2x me-2"></i> <div class="text-start lh-1"><small style="font-size:10px">Download on the</small><br>App Store</div>
-                        </button>
-                        <button class="btn btn-dark d-flex align-items-center px-3 py-2 rounded-3 border-0">
-                            <i class="fab fa-google-play fa-2x me-2"></i> <div class="text-start lh-1"><small style="font-size:10px">GET IT ON</small><br>Google Play</div>
-                        </button>
+    <div class="container pb-5">
+        <div class="row">
+            
+            <div class="col-lg-3 mb-4">
+                <div class="filter-sidebar">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="filter-title mb-0">Sırala</h5>
+                        <small class="text-muted" style="cursor:pointer">Temizle</small>
                     </div>
-                </div>
-                <div class="col-md-4 text-center d-none d-md-block">
-                    <i class="fas fa-mobile-alt" style="font-size: 160px; transform: rotate(15deg); opacity: 0.8;"></i>
-                </div>
-            </div>
-        </div>
-
-        <h3 class="fw-bold mb-4 mt-5" style="color: #2d3436;">Popüler Restoranlar</h3>
-        
-        <div class="row g-4 mb-5">
-            {% for restoran in restoranlar %}
-            <div class="col-md-4">
-                <a href="{% url 'restoran_detay' restoran.id %}" class="restaurant-card shadow-sm">
-                    <div class="card-img-wrapper">
-                        {% if restoran.resim_linki %}
-                            <img src="{{ restoran.resim_linki }}" class="card-img-top" alt="{{ restoran.isim }}">
-                        {% else %}
-                            <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center text-white display-6"><i class="fas fa-store"></i></div>
-                        {% endif %}
-                        <div class="badge-rating"><i class="fas fa-star me-1"></i>4.5</div>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h5 class="rest-name mb-0">{{ restoran.isim }}</h5>
-                            <span class="badge bg-light text-dark border"><i class="far fa-clock me-1"></i> 20 dk</span>
+                    
+                    <div class="mb-4">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="sortOrder" id="sortRec" checked>
+                            <label class="form-check-label" for="sortRec">Önerilen</label>
                         </div>
-                        <p class="rest-desc">{{ restoran.aciklama }}</p>
-                        <div class="d-flex justify-content-between align-items-center border-top pt-3 mt-2">
-                            <span class="delivery-free"><i class="fas fa-motorcycle me-1"></i> Ücretsiz Teslimat</span>
-                            <small class="text-muted fw-bold">Min. 150 TL</small>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="sortOrder" id="sortPoint">
+                            <label class="form-check-label" for="sortPoint">Puana Göre</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="sortOrder" id="sortTime">
+                            <label class="form-check-label" for="sortTime">Teslimat Süresine Göre</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="sortOrder" id="sortDiscount">
+                            <label class="form-check-label" for="sortDiscount">İndirimli Olanlar</label>
                         </div>
                     </div>
-                </a>
+
+                    <hr class="text-muted opacity-25">
+
+                    <h5 class="filter-title mt-4">Mutfaklar</h5>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-muted small"></i></span>
+                        <input type="text" class="form-control bg-light border-start-0" placeholder="Mutfak ara..." style="font-size: 0.9rem;">
+                    </div>
+
+                    <div class="cuisine-list">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="catAll" checked>
+                            <label class="form-check-label fw-bold" for="catAll">Tümü</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="catBurger">
+                            <label class="form-check-label" for="catBurger">Burger</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="catDoner">
+                            <label class="form-check-label" for="catDoner">Döner</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="catPizza">
+                            <label class="form-check-label" for="catPizza">Pizza</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="catKebap">
+                            <label class="form-check-label" for="catKebap">Kebap & Türk Mutfağı</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="catTavuk">
+                            <label class="form-check-label" for="catTavuk">Tavuk Dünyası</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="catTatli">
+                            <label class="form-check-label" for="catTatli">Tatlı & Pastane</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="catPide">
+                            <label class="form-check-label" for="catPide">Pide & Lahmacun</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="catCigkofte">
+                            <label class="form-check-label" for="catCigkofte">Çiğ Köfte</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="catUzak">
+                            <label class="form-check-label" for="catUzak">Uzak Doğu</label>
+                        </div>
+                    </div>
+
+                </div>
             </div>
-            {% empty %}
-                <div class="col-12 text-center py-5"><p class="text-muted">Henüz restoran yok.</p></div>
-            {% endfor %}
+
+            <div class="col-lg-9">
+                
+                <div class="app-banner shadow mb-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h3 class="fw-bold mb-1">Söyleyelim Cebinde!</h3>
+                            <p class="mb-2 opacity-90 small">Uygulamayı indir, sana özel indirimleri kaçırma.</p>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-dark d-flex align-items-center px-2 py-1 rounded-3 border-0 btn-sm">
+                                    <i class="fab fa-apple fa-lg me-2"></i> <div class="text-start lh-1"><small style="font-size:8px">Download on the</small><br><span style="font-size:12px">App Store</span></div>
+                                </button>
+                                <button class="btn btn-dark d-flex align-items-center px-2 py-1 rounded-3 border-0 btn-sm">
+                                    <i class="fab fa-google-play fa-lg me-2"></i> <div class="text-start lh-1"><small style="font-size:8px">GET IT ON</small><br><span style="font-size:12px">Google Play</span></div>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center d-none d-md-block">
+                            <i class="fas fa-mobile-alt" style="font-size: 100px; transform: rotate(15deg); opacity: 0.8;"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="fw-bold" style="color: #2d3436;">Tüm Restoranlar</h4>
+                    <span class="text-muted small">İstanbul, Kadıköy <i class="fas fa-chevron-down ms-1"></i></span>
+                </div>
+                
+                <div class="row g-4 mb-5">
+                    {% for restoran in restoranlar %}
+                    <div class="col-md-6 col-lg-4">
+                        <a href="{% url 'restoran_detay' restoran.id %}" class="restaurant-card shadow-sm">
+                            <div class="card-img-wrapper">
+                                {% if restoran.resim_linki %}
+                                    <img src="{{ restoran.resim_linki }}" class="card-img-top" alt="{{ restoran.isim }}">
+                                {% else %}
+                                    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center text-white display-6"><i class="fas fa-store"></i></div>
+                                {% endif %}
+                                <div class="badge-rating"><i class="fas fa-star me-1"></i>4.5</div>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="rest-name mb-0">{{ restoran.isim }}</h5>
+                                    <span class="badge bg-light text-dark border"><i class="far fa-clock me-1"></i> 20-30 dk</span>
+                                </div>
+                                <p class="rest-desc small text-muted mb-2">{{ restoran.aciklama|truncatechars:60 }}</p>
+                                <div class="d-flex justify-content-between align-items-center border-top pt-2 mt-2">
+                                    <span class="delivery-free"><i class="fas fa-motorcycle me-1"></i> Ücretsiz Teslimat</span>
+                                    <small class="text-muted fw-bold">Min. 150 TL</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    {% empty %}
+                        <div class="col-12 text-center py-5"><p class="text-muted">Henüz restoran yok.</p></div>
+                    {% endfor %}
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <footer class="bg-dark text-white py-4 mt-5">
+    <footer class="bg-dark text-white py-4 mt-auto">
         <div class="container text-center">
-            <p class="mb-0 opacity-50">&copy; 2025 İstegelsin. Tüm hakları saklıdır.</p>
+            <p class="mb-0 opacity-50">&copy; 2025 Söyleyelim. Tüm hakları saklıdır.</p>
         </div>
     </footer>
 

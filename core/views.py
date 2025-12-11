@@ -106,3 +106,7 @@ def yemek_detay(request, yemek_id):
         'yemek': secilen_yemek,
         'restoran': secilen_restoran
     })
+# Bu kısmı views.py dosyasının en altına yapıştır
+def restoran_ara(request, restoran_id):
+    restoran = get_object_or_404(Restoran, id=restoran_id)
+    return render(request, 'core/restoran_ara.html', {'restoran': restoran})
