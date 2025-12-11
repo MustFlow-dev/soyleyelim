@@ -55,11 +55,22 @@ DATABASES = {
 }
 
 AUTH_PASSWORD_VALIDATORS = []
-LANGUAGE_CODE = 'tr' # Türkçe yaptık
+LANGUAGE_CODE = 'tr' 
 TIME_ZONE = 'Europe/Istanbul'
 USE_I18N = True
 USE_TZ = True
-STATIC_URL = 'static/'
+
+# --- STATİK VE MEDYA AYARLARI (DÜZELTİLDİ) ---
+STATIC_URL = '/static/'  # Başına / koydum, bu daha sağlıklıdır
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
+# --- EKSİK OLAN KISIM BURASIYDI ---
+# Bu ayarlar olmadığı için sistem hata veriyordu.
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 
 # --- PANEL AYARLARI ---
 JAZZMIN_SETTINGS = {
@@ -76,6 +87,3 @@ JAZZMIN_UI_TWEAKS = {
     "brand_colour": "navbar-danger",
     "sidebar": "sidebar-dark-danger",
 }
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
