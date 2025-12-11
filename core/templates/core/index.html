@@ -5,12 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Söyleyelim | Kapındaki Lezzet</title>
+    
+    <link rel="icon" href="https://ui-avatars.com/api/?name=S&background=ff6b00&color=fff&size=128&font-size=0.6&rounded=true" type="image/png">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root { --primary-color: #ff6b00; --dark-bg: #2d3436; }
-        /* Arka plan rengi hafif turuncu yapıldı */
         body { background-color: #fff3e0; font-family: 'Segoe UI', sans-serif; }
         
         /* Navbar */
@@ -22,7 +24,8 @@
             background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
             background-size: cover; background-position: center;
             height: 350px; display: flex; align-items: center; justify-content: center;
-            color: white; border-radius: 0 0 30px 30px; margin-bottom: 30px;
+            color: white; border-radius: 0 0 40px 40px;
+            margin-bottom: 30px;
         }
         .search-box input { border-radius: 50px 0 0 50px; border: none; padding: 15px 30px; }
         .search-box button { border-radius: 0 50px 50px 0; background-color: var(--primary-color); border: none; padding: 15px 30px; font-weight: bold; color: white;}
@@ -30,7 +33,8 @@
         /* Mobil Uygulama Banner */
         .app-banner {
             background: linear-gradient(135deg, #ff9f43 0%, #ff6b00 100%);
-            border-radius: 20px; padding: 20px; margin: 20px 0; color: white;
+            border-radius: 35px;
+            padding: 30px; margin: 20px 0; color: white;
             position: relative; overflow: hidden;
         }
 
@@ -38,7 +42,7 @@
         .filter-sidebar {
             background: white;
             padding: 25px;
-            border-radius: 15px;
+            border-radius: 35px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.03);
             position: sticky;
             top: 100px;
@@ -47,14 +51,8 @@
         .filter-title { font-weight: 700; color: #2d3436; margin-bottom: 15px; font-size: 1.1rem; }
         
         /* Checkbox ve Radio Butonları Özelleştirme */
-        .form-check-input:checked { 
-            background-color: var(--primary-color); 
-            border-color: var(--primary-color); 
-        }
-        .form-check-input:focus { 
-            box-shadow: none !important;
-            border-color: var(--primary-color); 
-        }
+        .form-check-input:checked { background-color: var(--primary-color); border-color: var(--primary-color); }
+        .form-check-input:focus { box-shadow: none !important; border-color: var(--primary-color); }
         .form-check-label { color: #636e72; font-weight: 500; cursor: pointer; }
         .form-check-label:hover { color: var(--primary-color); }
         
@@ -71,22 +69,24 @@
             margin: 0 auto 5px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-size: 20px; color: var(--dark-bg);
         }
 
-        /* Restoran Kartları */
+        /* --- RESTORAN KARTLARI --- */
         .restaurant-card {
-            border: none; border-radius: 15px; background: white;
+            border: none; 
+            border-radius: 35px;
+            background: white;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             overflow: hidden; height: 100%; text-decoration: none; display: block; color: inherit;
         }
-        .restaurant-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+        .restaurant-card:hover { transform: translateY(-8px); box-shadow: 0 15px 40px rgba(0,0,0,0.15); }
         
-        .card-img-wrapper { height: 180px; overflow: hidden; position: relative; }
+        .card-img-wrapper { height: 200px; overflow: hidden; position: relative; }
         .card-img-top { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
-        .restaurant-card:hover .card-img-top { transform: scale(1.1); } 
+        .restaurant-card:hover .card-img-top { transform: scale(1.08); } 
 
-        .badge-rating { position: absolute; top: 15px; right: 15px; background: white; padding: 5px 12px; border-radius: 20px; font-weight: bold; color: #27ae60; box-shadow: 0 2px 5px rgba(0,0,0,0.2); font-size: 0.8rem; }
+        .badge-rating { position: absolute; top: 20px; right: 20px; background: white; padding: 5px 15px; border-radius: 30px; font-weight: bold; color: #27ae60; box-shadow: 0 4px 10px rgba(0,0,0,0.1); font-size: 0.9rem; }
         
-        .card-body { padding: 15px; }
-        .rest-name { font-weight: 700; font-size: 1.1rem; color: #2d3436; margin-bottom: 5px; }
+        .card-body { padding: 25px; }
+        .rest-name { font-weight: 800; font-size: 1.2rem; color: #2d3436; margin-bottom: 5px; }
         .delivery-free { color: #27ae60; font-size: 0.85rem; font-weight: 700; }
 
         /* Butonlar */
@@ -99,7 +99,9 @@
 
     <nav class="navbar navbar-expand-lg sticky-top py-3">
         <div class="container">
-            <a class="navbar-brand fs-3" href="{% url 'index' %}"><i class="fas fa-motorcycle me-2"></i>Söyleyelim</a>
+            <a class="navbar-brand fs-3" href="{% url 'index' %}">
+                Söyleyelim
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -132,7 +134,7 @@
     </div>
 
     <div class="container mb-4">
-        <div class="d-flex justify-content-between overflow-auto gap-4 py-3">
+        <div class="d-flex justify-content-between overflow-auto gap-4 py-3" style="scrollbar-width: none;">
             <div class="category-item"><div class="cat-icon"><i class="fas fa-hamburger"></i></div><span class="fw-bold text-secondary small">Burger</span></div>
             <div class="category-item"><div class="cat-icon"><i class="fas fa-pizza-slice"></i></div><span class="fw-bold text-secondary small">Pizza</span></div>
             <div class="category-item"><div class="cat-icon"><i class="fas fa-drumstick-bite"></i></div><span class="fw-bold text-secondary small">Tavuk</span></div>

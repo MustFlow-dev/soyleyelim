@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-test-key'
@@ -75,3 +76,6 @@ JAZZMIN_UI_TWEAKS = {
     "brand_colour": "navbar-danger",
     "sidebar": "sidebar-dark-danger",
 }
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
