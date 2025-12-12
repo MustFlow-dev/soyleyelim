@@ -1,0 +1,139 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 900px;">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0 text-dark">Kayıtlı Kartlarım</h2>
+        <button class="btn btn-primary rounded-pill px-4 shadow-sm" data-bs-toggle="modal"
+            data-bs-target="#newCardModal" style="background-color: #ff6b00; border:none;">
+            <i class="fas fa-plus me-2"></i> Yeni Kart Ekle
+        </button>
+    </div>
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} shadow-sm">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="row g-4">
+        {% for kart in kartlar %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100"
+                style="border-radius: 20px; background: linear-gradient(135deg, #2d3436 0%, #000000 100%); color: white;">
+                <div class="card-body p-4 d-flex flex-col justify-content-between"
+                    style="min-height: 200px; display: flex; flex-direction: column;">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="opacity-75 small text-uppercase letter-spacing-2">{{ kart.kart_adi }}</div>
+                        <i class="fab fa-cc-mastercard fa-2x opacity-50"></i>
+                    </div>
+
+                    <div class="my-4">
+                        <div class="fs-4 letter-spacing-2 font-monospace">{{ kart.kart_numarasi }}</div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-end">
+                        <div>
+                            <div class="small opacity-50" style="font-size: 0.7rem;">KART SAHİBİ</div>
+                            <div class="fw-bold text-uppercase">{{ kart.kart_sahibi }}</div>
+                        </div>
+                        <div class="text-end">
+                            <div class="small opacity-50" style="font-size: 0.7rem;">SKT</div>
+                            <div class="fw-bold">{{ kart.son_kullanma_ay }}/{{ kart.son_kullanma_yil }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer border-0 bg-transparent p-3 text-end">
+                    <a href="{% url 'kart_sil' kart.id %}"
+                        class="btn btn-sm btn-outline-light rounded-pill px-3 onclick-confirm"
+                        onclick="return confirm('Bu kartı silmek istediğinize emin misiniz?')">
+                        <i class="fas fa-trash-alt me-1"></i> Sil
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="text-muted opacity-50 mb-3">
+                <i class="far fa-credit-card fa-4x"></i>
+            </div>
+            <h5 class="text-secondary fw-normal">Henüz kayıtlı kartınız bulunmuyor.</h5>
+            <p class="small text-muted">Ödeme işlemlerinizi hızlandırmak için kart ekleyebilirsiniz.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+<!-- Yeni Kart Ekle Modal -->
+<div class="modal fade" id="newCardModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold ps-2">Yeni Kart Ekle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form action="{% url 'kart_ekle' %}" method="POST" id="cardForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-secondary">Kart Başlığı</label>
+                        <input type="text" class="form-control bg-light border-0" name="kart_adi"
+                            placeholder="Örn: Maaş Kartım" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-secondary">Kart Sahibinin Adı Soyadı</label>
+                        <input type="text" class="form-control bg-light border-0" name="kart_sahibi" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-secondary">Kart Numarası</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-0"><i class="far fa-credit-card"></i></span>
+                            <input type="text" class="form-control bg-light border-0" name="kart_numarasi"
+                                placeholder="0000 0000 0000 0000" maxlength="19" required>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <label class="form-label fw-bold small text-secondary">Ay</label>
+                            <select class="form-select bg-light border-0" name="ay" required>
+                                <option value="">Seçiniz</option>
+                                {% for i in "01,02,03,04,05,06,07,08,09,10,11,12"|make_list %}
+                                <!-- Django template tag split trick is messy, hardcoding ok for demo -->
+                                {% endfor %}
+                                <option value="01">01</option>
+                                <option value="02">02</option>
+                                <option value="03">03</option>
+                                <option value="04">04</option>
+                                <option value="05">05</option>
+                                <option value="06">06</option>
+                                <option value="07">07</option>
+                                <option value="08">08</option>
+                                <option value="09">09</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-bold small text-secondary">Yıl</label>
+                            <select class="form-select bg-light border-0" name="yil" required>
+                                <option value="2024">2024</option>
+                                <option value="2025">2025</option>
+                                <option value="2026">2026</option>
+                                <option value="2027">2027</option>
+                                <option value="2028">2028</option>
+                                <option value="2029">2029</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-dark w-100 py-3 rounded-pill fw-bold">Kaydet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4 text-center">Favori Restoranlarım ❤️</h2>
+
+    <div class="row">
+        {% for restoran in restoranlar %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm border-0 bg-white">
+                <div class="position-relative">
+                    {% if restoran.resim_linki %}
+                    <img src="{{ restoran.resim_linki }}" class="card-img-top" alt="{{ restoran.isim }}"
+                        style="height: 200px; object-fit: cover;">
+                    {% else %}
+                    <img src="https://via.placeholder.com/300x200?text=Restoran" class="card-img-top"
+                        alt="{{ restoran.isim }}">
+                    {% endif %}
+
+                    <a href="{% url 'favori_toggle' restoran.id %}"
+                        class="position-absolute top-0 end-0 m-2 btn btn-light rounded-circle shadow-sm p-2"
+                        style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-heart text-danger"></i>
+                    </a>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">{{ restoran.isim }}</h5>
+                    <p class="card-text text-muted">{{ restoran.aciklama|truncatechars:100 }}</p>
+                    <a href="{% url 'restoran_detay' restoran.id %}" class="btn btn-primary w-100">Menüyü İncele</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="text-muted">
+                <i class="far fa-heart fa-4x mb-3"></i>
+                <h4>Henüz Favori Restoranın Yok</h4>
+                <p>Lezzetleri keşfetmeye başla ve beğendiklerini kalp ikonuna tıklayarak buraya ekle!</p>
+                <a href="{% url 'index' %}" class="btn btn-warning mt-3 text-white fw-bold">Keşfetmeye Başla</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

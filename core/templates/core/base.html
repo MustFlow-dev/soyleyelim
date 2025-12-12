@@ -1,0 +1,491 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Söyleyelim | Kapındaki Lezzet{% endblock %}</title>
+
+    <link rel="icon"
+        href="https://ui-avatars.com/api/?name=S&background=ff6b00&color=fff&size=128&font-size=0.6&rounded=true"
+        type="image/png">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-color: #ff6b00;
+            --dark-bg: #2d3436;
+        }
+
+        body {
+            background-color: #fff3e0;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        /* Partner Butonu */
+        .nav-link-partner {
+            color: #ff6b00 !important;
+            background-color: white;
+            border: 2px solid #ff6b00;
+            padding: 8px 25px;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .nav-link-partner:hover {
+            color: white !important;
+            background-color: #ff6b00;
+            box-shadow: 0 5px 15px rgba(255, 107, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* --- SEPET BUTONU STİLİ --- */
+        .btn-sepet {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-sepet:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 107, 0, 0.3);
+        }
+
+        .btn-sepet i {
+            font-size: 1.1rem;
+        }
+
+        .sepet-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #dc3545;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+        }
+
+        /* Butonlar */
+        .btn-giris {
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 600;
+            border-radius: 20px;
+        }
+
+        .btn-giris:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary-custom {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 20px;
+            font-weight: 600;
+            border: none;
+            padding: 8px 20px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-size: 0.9rem;
+        }
+
+        .footer-top {
+            background-color: #f9f9f9;
+            color: #333;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .footer-main {
+            padding: 50px 0 20px;
+        }
+
+        .footer-title {
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: #999;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .social-links a {
+            color: white;
+            margin-right: 15px;
+            font-size: 1.2rem;
+            text-decoration: none;
+        }
+
+        /* Social Media Icons */
+        .social-icon-btn {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ccc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-size: 1.4rem;
+        }
+
+        .social-icon-btn:hover {
+            color: white;
+            transform: translateY(-5px) scale(1.1);
+            border-color: transparent;
+        }
+
+        .social-icon-btn.instagram:hover {
+            background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+            box-shadow: 0 10px 20px rgba(214, 36, 159, 0.3);
+        }
+
+        .social-icon-btn.twitter:hover {
+            background: #1da1f2;
+            box-shadow: 0 10px 20px rgba(29, 161, 242, 0.3);
+        }
+
+        .social-icon-btn.linkedin:hover {
+            background: #0077b5;
+            box-shadow: 0 10px 20px rgba(0, 119, 181, 0.3);
+        }
+
+        .social-icon-btn.youtube:hover {
+            background: #ff0000;
+            box-shadow: 0 10px 20px rgba(255, 0, 0, 0.3);
+        }
+
+        .app-badges img {
+            height: 40px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #444;
+        }
+
+        .copyright {
+            background-color: #111;
+            padding: 20px 0;
+            color: #666;
+            font-size: 0.8rem;
+        }
+    </style>
+
+    {% block extra_css %}
+    {% endblock %}
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg sticky-top py-3">
+        <div class="container">
+            <a class="navbar-brand fs-3" href="{% url 'index' %}">
+                Söyleyelim
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link-partner" href="{% url 'partner' %}">Restoran Sahibi Ol</a>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav gap-3 align-items-center">
+
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle fw-bold d-flex align-items-center" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false" style="color: #ff6b00 !important;">
+                            <i class="fas fa-user mb-1 me-2"></i> Hesabım
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0"
+                            style="min-width: 260px; border-radius: 15px; padding: 10px; margin-top: 10px;">
+                            <li class="px-3 py-2 border-bottom text-center mb-2">
+                                <div class="small text-muted mb-1">{{ user.email|default:user.username }}</div>
+                            </li>
+                            {% if user.is_staff %}
+                            <li><a class="dropdown-item py-2 d-flex align-items-center rounded"
+                                    href="{% url 'admin_chat_dashboard' %}">
+                                    <div style="width: 30px;"><i class="fas fa-headset text-warning"></i></div> Destek
+                                    Paneli
+                                </a></li>
+                            <li>
+                                <hr class="dropdown-divider my-2">
+                            </li>
+                            {% endif %}
+                            <li><a class="dropdown-item py-2 d-flex align-items-center rounded"
+                                    href="{% url 'siparislerim' %}">
+                                    Siparişlerim
+                                </a></li>
+                            <li><a class="dropdown-item py-2 d-flex align-items-center rounded"
+                                    href="{% url 'favorilerim' %}">
+                                    <div style="width: 30px;"><i class="fas fa-heart text-danger"></i></div> Favorilerim
+                                </a></li>
+                            <li><a class="dropdown-item py-2 d-flex align-items-center rounded"
+                                    href="{% url 'kullanici_bilgileri' %}">
+                                    Kullanıcı Bilgilerim
+                                </a></li>
+                            <li><a class="dropdown-item py-2 d-flex align-items-center rounded"
+                                    href="{% url 'kayitli_kartlarim' %}">
+                                    Kayıtlı Kartlarım
+                                </a></li>
+                            <li>
+                                <hr class="dropdown-divider my-2">
+                            </li>
+                            <li><a class="dropdown-item py-2 d-flex align-items-center rounded text-danger"
+                                    href="{% url 'cikis' %}">
+                                    <div style="width: 30px;"><i class="fas fa-sign-out-alt"></i></div> Çıkış Yap
+                                </a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item"><a class="btn btn-giris btn-sm px-4" href="{% url 'giris' %}">Giriş</a></li>
+                    <li class="nav-item"><a class="btn btn-primary-custom btn-sm" href="{% url 'kayit' %}">Kayıt Ol</a>
+                    </li>
+                    {% endif %}
+
+                    <li class="nav-item ms-2">
+                        <a class="btn-sepet position-relative" href="{% url 'sepet_detay' %}">
+                            <i class="fas fa-shopping-basket"></i>
+                            {% if global_sepet_adet > 0 %}
+                            <span class="sepet-badge">{{ global_sepet_adet }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+
+    <!-- Bildirim Alanı -->
+    {% if messages %}
+    <div
+        style="position: fixed; top: 100px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 90%; max-width: 600px;">
+        {% for message in messages|slice:":1" %}
+        <div id="auto-toast" class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-lg border-0"
+            role="alert"
+            style="border-radius: 50px; background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); color: #2d3436; font-weight: 600;">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-check-circle text-success fs-4 me-3"></i>
+                <div>{{ message }}</div>
+            </div>
+        </div>
+        <script>
+            setTimeout(function () {
+                var toastElement = document.getElementById('auto-toast');
+                if (toastElement) {
+                    toastElement.style.transition = "opacity 1s ease-out";
+                    toastElement.style.opacity = "0";
+                    setTimeout(function () {
+                        toastElement.remove();
+                    }, 1000);
+                }
+            }, 6000);
+        </script>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% block content %}
+    {% endblock %}
+
+    <!-- Footer Top Info -->
+    <div class="footer-top">
+        <div class="container">
+            <h2 class="mb-3" style="font-weight: 600;">İletişim</h2>
+            <p class="text-muted mb-2">Çağrı merkezimiz hafta içi ve hafta sonu 08.30 / 24.00 saatleri arasında hizmet
+                vermektedir.</p>
+            <p style="color: #ff6b00; font-weight: 500;">
+                <i class="fas fa-map-marker-alt me-2"></i> Maslak Mah. Ahi Evran Cad. 42 Maslak B Blok Sitesi No.6 İç
+                Kapı No.200 Sarıyer İstanbul
+                <span class="ms-3"><i class="fas fa-phone-alt me-2"></i> 0 212 365 34 00</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- Main Footer -->
+    <footer>
+        <div class="container footer-main">
+            <div class="row">
+                <div class="col-md-3 mb-4">
+                    <h5 class="footer-title">Söyleyelim</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">İletişim</a></li>
+                        <li><a href="#" style="opacity: 0.7;">Söyleyelim Kurye Başvuru</a></li>
+                    </ul>
+
+                    <div class="mt-4">
+                        <a href="#" class="d-block mb-2">
+                            <!-- Using a placeholder for App Store badge -->
+                            <div
+                                style="background: black; border: 1px solid #444; border-radius: 8px; padding: 5px 12px; display: inline-flex; align-items: center; color: white; min-width: 160px; height: 55px; transition: transform 0.2s;">
+                                <i class="fab fa-apple fa-2x me-3"></i>
+                                <div style="line-height: 1.2;">
+                                    <small style="font-size: 10px; opacity: 0.8;">App Store'dan</small><br>
+                                    <span style="font-weight: bold; font-size: 14px;">İndirin</span>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="#" class="d-block">
+                            <!-- Using a placeholder for Google Play badge -->
+                            <div
+                                style="background: black; border: 1px solid #444; border-radius: 8px; padding: 5px 12px; display: inline-flex; align-items: center; color: white; min-width: 160px; height: 55px; transition: transform 0.2s;">
+                                <i class="fab fa-google-play fa-xl me-3"></i>
+                                <div style="line-height: 1.2;">
+                                    <small style="font-size: 10px; opacity: 0.8;">Google Play</small><br>
+                                    <span style="font-weight: bold; font-size: 14px;">'DEN İNDİRİN</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-4">
+                    <h5 class="footer-title">Sosyal Medya</h5>
+                    <div class="d-flex gap-3">
+                        <a href="https://www.instagram.com/soyleyelim" target="_blank"
+                            class="social-icon-btn instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://twitter.com/soyleyelim" target="_blank" class="social-icon-btn twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/company/soyleyelim" target="_blank"
+                            class="social-icon-btn linkedin">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="https://www.youtube.com/soyleyelim" target="_blank" class="social-icon-btn youtube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-4">
+                    <!-- Empty column for spacing if needed or future use -->
+                </div>
+
+                <div class="col-md-3 mb-4">
+                    <h5 class="footer-title">Hakkımızda</h5>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'biz_kimiz' %}">Biz Kimiz</a></li>
+                        <li><a href="{% url 'kullanim_kosullari' %}">Kullanım Koşulları</a></li>
+                        <li><a href="{% url 'kvkk' %}">KVKK ve Gizlilik Politikası</a></li>
+                        <li><a href="{% url 'cerez_politikasi' %}">Çerez Politikası</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="copyright text-center">
+            <div class="container">
+                <p class="mb-0">&copy; 2025 Söyleyelim Elektronik Ticaret Hizmetleri ve Yatırımları A.Ş. - Her Hakkı
+                    Saklıdır.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Sticky Promo Banner (Forced Visible) -->
+    <div id="sticky-promo-bar"
+        style="position: fixed !important; bottom: 0 !important; left: 0 !important; width: 100% !important; z-index: 2147483647 !important; background-color: #000; padding: 12px 0; border-top: 4px solid #ea004b; box-shadow: 0 -5px 20px rgba(0,0,0,0.3); display: block !important;">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <div class="rounded-circle bg-white d-flex align-items-center justify-content-center me-3"
+                    style="width: 45px; height: 45px; box-shadow: 0 0 15px rgba(255,255,255,0.3);">
+                    <i class="fas fa-gift text-danger fs-4"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold text-white mb-0" style="font-size: 1.1rem;">Hoş geldiniz, keyfini çıkarın!</h5>
+                    <div class="text-white-50" style="font-size: 0.9rem;">Özel İndirimler <span
+                            class="text-warning fw-bold">İlk siparişinizde.</span></div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center">
+                <a href="{% url 'kayit' %}"
+                    class="btn bg-white text-danger fw-bold rounded-pill px-4 py-2 me-3 shadow-sm hover-scale"
+                    style="transition: transform 0.2s;">Kayıt ol</a>
+                <button type="button" class="btn-close btn-close-white" aria-label="Close"
+                    onclick="document.getElementById('sticky-promo-bar').remove()"></button>
+            </div>
+        </div>
+    </div>
+    <style>
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+    </style>
+
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

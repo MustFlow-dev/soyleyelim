@@ -233,16 +233,31 @@
                 <!-- Takip Adımları Kaldırıldı -->
 
                 <!-- Hızlı İşlemler: Ödeme -->
-                <div class="bg-light p-3 rounded mb-3 border">
-                    <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="fw-bold text-dark"><i class="fas fa-bolt text-warning me-1"></i> Beklemek İstemiyor
-                            musun?</span>
+                <!-- Hızlı İşlemler: Ödeme -->
+
+
+                <!-- Visual Progress Bar Removed -->
+
+                <div class="card border-0 shadow-sm mt-3 mb-4 bg-white">
+                    <div class="card-body p-2 pe-3">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <div class="p-3 me-3 text-success d-flex align-items-center justify-content-center"
+                                    style="background-color: #e8f5e9; border-radius: 15px; width: 50px; height: 50px;">
+                                    <i class="fas fa-credit-card fa-lg"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-0 text-dark">Hızlı Ödeme</h6>
+                                    <small class="text-muted" style="font-size: 0.8rem;">İşlemi hızlandırmak için hemen
+                                        öde</small>
+                                </div>
+                            </div>
+                            <a href="{% url 'odeme_sayfasi' siparis.id %}"
+                                class="btn btn-success rounded-3 px-4 py-2 fw-bold shadow-sm">
+                                Öde <i class="fas fa-chevron-right ms-1" style="font-size: 0.8rem;"></i>
+                            </a>
+                        </div>
                     </div>
-                    <p class="small text-muted mb-2">Sıranın önüne geçmek için temassız ödeme yapabilirsin.</p>
-                    <a href="{% url 'odeme_sayfasi' siparis.id %}"
-                        class="action-btn btn-pay w-100 btn-sm text-decoration-none d-block text-center">
-                        <i class="fas fa-credit-card me-2"></i> Kartla Hemen Öde
-                    </a>
                 </div>
 
                 <!-- Aksiyon Butonları -->

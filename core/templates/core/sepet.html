@@ -96,7 +96,7 @@
                                 <thead class="bg-light">
                                     <tr>
                                         <th class="ps-4">Ürün</th>
-                                        <th class="text-center">Adet</th>
+                                        <th class="text-center" style="width: 120px;"></th>
                                         <th class="text-end pe-4">Fiyat</th>
                                         <th class="text-end pe-4">İşlem</th>
                                     </tr>
@@ -122,9 +122,20 @@
                                             </div>
                                         </td>
                                         <td class="text-center">
-                                            <span class="badge bg-light text-dark border fs-6">{{ urun.adet }}</span>
-                                            <a href="{% url 'sepete_ekle' urun.yemek.id %}" class="text-success ms-1"><i
-                                                    class="fas fa-plus-circle"></i></a>
+                                            <div class="input-group input-group-sm rounded-pill border mx-auto"
+                                                style="width: 100px;">
+                                                <a href="{% url 'sepet_adet_azalt' urun.id %}"
+                                                    class="btn btn-link text-dark text-decoration-none border-0 px-2">
+                                                    <i class="fas fa-minus small"></i>
+                                                </a>
+                                                <input type="text"
+                                                    class="form-control border-0 text-center bg-transparent p-0 fw-bold"
+                                                    value="{{ urun.adet }}" readonly style="font-size: 0.9rem;">
+                                                <a href="{% url 'sepete_ekle' urun.yemek.id %}"
+                                                    class="btn btn-link text-dark text-decoration-none border-0 px-2">
+                                                    <i class="fas fa-plus small"></i>
+                                                </a>
+                                            </div>
                                         </td>
                                         <td class="text-end pe-4 fw-bold text-dark">
                                             {{ urun.toplam_fiyat }} ₺
@@ -151,9 +162,41 @@
                                         class="text-decoration-none">şartlarımızı</a> kabul etmiş olursunuz.</p>
                             </div>
                             <div class="col-md-6 text-end">
-                                <div class="d-flex justify-content-end align-items-center mb-3">
-                                    <span class="text-muted me-3">Genel Toplam:</span>
-                                    <span class="display-6 fw-bold text-success">{{ toplam_tutar }} ₺</span>
+                                <hr>
+
+                                <!-- Kupon Alanı -->
+                                <div class="mb-3">
+                                    <label class="form-label small text-muted">İndirim Kuponu</label>
+                                    <form action="{% url 'kupon_uygula' %}" method="POST" class="d-flex gap-2">
+                                        {% csrf_token %}
+                                        <input type="text" name="kod" class="form-control form-control-sm"
+                                            placeholder="Kupon Kodu" value="{{ kupon_kod|default:'' }}">
+                                        <button type="submit" class="btn btn-outline-primary btn-sm">Uygula</button>
+                                    </form>
+                                    {% if kupon_indirim %}
+                                    <div class="text-success small mt-1">
+                                        <i class="fas fa-check-circle"></i> %{{ kupon_indirim }} indirim uygulandı!
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <hr>
+
+                                <div class="d-flex justify-content-between mb-2 text-muted">
+                                    <span>Ara Toplam:</span>
+                                    <span>{{ ara_toplam }} ₺</span>
+                                </div>
+
+                                {% if indirim_tutari > 0 %}
+                                <div class="d-flex justify-content-between mb-2 text-success fw-bold">
+                                    <span>İndirim:</span>
+                                    <span>-{{ indirim_tutari|floatformat:2 }} ₺</span>
+                                </div>
+                                {% endif %}
+
+                                <div class="d-flex justify-content-between mb-4 mt-3">
+                                    <h5 class="fw-bold">Toplam Tutar:</h5>
+                                    <h4 class="fw-bold text-primary">{{ odenecek_tutar|floatformat:2 }} ₺</h4>
                                 </div>
                                 <!-- Şimdilik sipariş ver butonu tekrar sepet detayına gidiyor, ileride sipariş oluşturma sayfasına gidecek -->
                                 <a href="{% url 'siparis_olustur' %}"

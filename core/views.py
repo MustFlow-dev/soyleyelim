@@ -8,10 +8,47 @@ from .models import Restoran, Yemek, RestoranBasvuru, Siparis, SiparisUrun, Sepe
 # --- ANASAYFA ---
 def index(request):
     restoranlar = Restoran.objects.all()
+    
+    # Favorileri al
+    favori_ids = []
+    if request.user.is_authenticated:
+        favori_ids = Favori.objects.filter(user=request.user).values_list('restoran_id', flat=True)
+
     context = {
-        'restoranlar': restoranlar
+        'restoranlar': restoranlar,
+        'favori_ids': list(favori_ids) # Template'de "in" operatörü için listeye çeviriyoruz
     }
     return render(request, 'core/index.html', context)
+
+# ... (rest of the file until sepet_detay) ...
+
+def sepet_detay(request):
+    sepet = _get_cart(request)
+    sepet_urunleri = SepetUrun.objects.filter(sepet=sepet)
+    
+    ara_toplam = sepet.toplam_tutar()
+    
+    # Kupon Kontrolü
+    indirim_tutari = 0
+    odenecek_tutar = ara_toplam
+    kupon_kod = request.session.get('kupon_kod')
+    kupon_indirim = request.session.get('kupon_indirim')
+    
+    if kupon_kod and kupon_indirim:
+        indirim_tutari = (ara_toplam * kupon_indirim) / 100
+        odenecek_tutar = ara_toplam - indirim_tutari
+    
+    context = {
+        'sepet': sepet,
+        'sepet_urunleri': sepet_urunleri,
+        'toplam_tutar': ara_toplam, # Eski değişken uyumluluğu için (artık 'ara_toplam')
+        'ara_toplam': ara_toplam,
+        'indirim_tutari': indirim_tutari,
+        'odenecek_tutar': odenecek_tutar,
+        'kupon_kod': kupon_kod,
+        'kupon_indirim': kupon_indirim
+    }
+    return render(request, 'core/sepet.html', context)
 
 # --- RESTORAN DETAY ---
 def restoran_detay(request, id):
@@ -171,10 +208,27 @@ def sepet_detay(request):
     sepet = _get_cart(request)
     sepet_urunleri = SepetUrun.objects.filter(sepet=sepet)
     
+    ara_toplam = sepet.toplam_tutar()
+    
+    # Kupon Kontrolü
+    indirim_tutari = 0
+    odenecek_tutar = ara_toplam
+    kupon_kod = request.session.get('kupon_kod')
+    kupon_indirim = request.session.get('kupon_indirim')
+    
+    if kupon_kod and kupon_indirim:
+        indirim_tutari = (ara_toplam * kupon_indirim) / 100
+        odenecek_tutar = ara_toplam - indirim_tutari
+    
     context = {
         'sepet': sepet,
         'sepet_urunleri': sepet_urunleri,
-        'toplam_tutar': sepet.toplam_tutar()
+        'toplam_tutar': ara_toplam, 
+        'ara_toplam': ara_toplam,
+        'indirim_tutari': indirim_tutari,
+        'odenecek_tutar': odenecek_tutar,
+        'kupon_kod': kupon_kod,
+        'kupon_indirim': kupon_indirim
     }
     return render(request, 'core/sepet.html', context)
 
@@ -191,6 +245,24 @@ def sepetten_cikar(request, sepet_urun_id):
     yemek_isim = sepet_urun.yemek.isim
     sepet_urun.delete()
     messages.info(request, f"{yemek_isim} sepetten çıkarıldı.")
+    return redirect('sepet_detay')
+
+def sepet_adet_azalt(request, sepet_urun_id):
+    sepet_urun = get_object_or_404(SepetUrun, id=sepet_urun_id)
+    current_cart = _get_cart(request)
+    
+    if sepet_urun.sepet != current_cart:
+         messages.error(request, "Bu işlemi yapmaya yetkiniz yok.")
+         return redirect('sepet_detay')
+         
+    if sepet_urun.adet > 1:
+        sepet_urun.adet -= 1
+        sepet_urun.save()
+        messages.success(request, f"{sepet_urun.yemek.isim} adeti azaltıldı.")
+    else:
+        sepet_urun.delete()
+        messages.info(request, f"{sepet_urun.yemek.isim} sepetten çıkarıldı.")
+        
     return redirect('sepet_detay')
 
 def sepeti_bosalt(request):
@@ -244,17 +316,44 @@ def siparis_olustur(request):
         # messages.success(request, "Siparişiniz başarıyla alındı!")
         return redirect('siparis_takip', id=siparis.id)
 
-    # GET isteği ise özet bilgi ve form sayfasını göster
+    # GET Request: Show Checkout Form
+    ara_toplam = sepet.toplam_tutar()
+    odenecek_tutar = ara_toplam
+    
+    # Check for coupon
+    kupon_indirim = request.session.get('kupon_indirim')
+    if kupon_indirim:
+        indirim_tutari = (ara_toplam * kupon_indirim) / 100
+        odenecek_tutar = ara_toplam - indirim_tutari
+
     context = {
-        'sepet': sepet,
         'sepet_urunleri': sepet_urunleri,
-        'toplam_tutar': sepet.toplam_tutar()
+        'toplam_tutar': odenecek_tutar
     }
     return render(request, 'core/siparis_olustur.html', context)
 
 def siparis_takip(request, id):
     siparis = get_object_or_404(Siparis, id=id)
     siparis_urunleri = SiparisUrun.objects.filter(siparis=siparis)
+    
+    # Progress Bar Logic
+    progress_width = 0
+    step1_class = "btn-secondary"
+    step2_class = "btn-secondary"
+    step3_class = "btn-secondary"
+
+    if siparis.durum == 'hazirlaniyor':
+        progress_width = 15
+        step1_class = "btn-success"
+    elif siparis.durum == 'yolda':
+        progress_width = 65
+        step1_class = "btn-success"
+        step2_class = "btn-success"
+    elif siparis.durum == 'teslim_edildi':
+        progress_width = 100
+        step1_class = "btn-success"
+        step2_class = "btn-success"
+        step3_class = "btn-success"
     
     # Restoran bilgisini al (ilk üründen)
     restoran = None
@@ -264,7 +363,11 @@ def siparis_takip(request, id):
     context = {
         'siparis': siparis,
         'siparis_urunleri': siparis_urunleri,
-        'restoran': restoran
+        'restoran': restoran,
+        'progress_width': progress_width,
+        'step1_class': step1_class,
+        'step2_class': step2_class,
+        'step3_class': step3_class
     }
     return render(request, 'core/siparis_takip.html', context)
 
@@ -325,3 +428,294 @@ def yorum_yap(request, siparis_id):
         return redirect('siparislerim')
     
     return redirect('index')
+
+def biz_kimiz(request):
+    return render(request, 'core/biz_kimiz.html')
+
+def kullanim_kosullari(request):
+    return render(request, 'core/kullanim_kosullari.html')
+
+def kvkk(request):
+    return render(request, 'core/kvkk.html')
+
+def cerez_politikasi(request):
+    return render(request, 'core/cerez_politikasi.html')
+
+# --- CANLI DESTEK API & VIEWS ---
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import ChatSession, ChatMessage
+from django.contrib.admin.views.decorators import staff_member_required
+
+def get_or_create_chat_session(request):
+    session_id = request.session.get('chat_session_id')
+    if not session_id:
+        session_id = str(uuid.uuid4())
+        request.session['chat_session_id'] = session_id
+    
+    chat_session, created = ChatSession.objects.get_or_create(session_id=session_id)
+    return chat_session
+
+@csrf_exempt
+def chat_api_send_message(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        message_text = data.get('message')
+        sender = data.get('sender', 'user') # 'user' or 'admin' (admin logic will be separate usually)
+
+        # Güvenlik: Admin mesajı sadece admin oturumundan atılabilir
+        if sender == 'admin' and not request.user.is_staff:
+            return JsonResponse({'status': 'error', 'message': 'Unauthorized'}, status=403)
+        
+        # Eğer admin panelinden geliyorsa session_id'yi post datasından al
+        if sender == 'admin':
+            session_id = data.get('session_id')
+            chat_session = get_object_or_404(ChatSession, session_id=session_id)
+        else:
+            chat_session = get_or_create_chat_session(request)
+
+        ChatMessage.objects.create(
+            chat_session=chat_session,
+            sender=sender,
+            message=message_text,
+            is_read=(sender=='admin') # Admin atınca user okumamış sayılır, user atınca admin okumamış sayılır
+        )
+        
+        if sender == 'user' and chat_session.customer_name == "Ziyaretçi":
+             # Belki ileride isim sorarız, şimdilik ID'nin bir kısmı
+             pass
+
+        # --- OTOMATİK YANIT SİSTEMİ (BOT) ---
+        if sender == 'user':
+            msg_lower = message_text.lower()
+            bot_reply = None
+            
+            if 'merhaba' in msg_lower or 'selam' in msg_lower:
+                bot_reply = "Merhabalar! Size nasıl yardımcı olabilirim?"
+            elif 'sipariş' in msg_lower or 'yemek' in msg_lower:
+                bot_reply = "Siparişinizle ilgili bir sorun mu yaşıyorsunuz? Lütfen sipariş numaranızı belirtin."
+            elif 'indirim' in msg_lower or 'kampanya' in msg_lower:
+                bot_reply = "Güncel kampanyalarımıza ana sayfadaki slider alanından ulaşabilirsiniz. Çok özel fırsatlar sizi bekliyor! 🍔"
+            elif 'kurye' in msg_lower or 'iş' in msg_lower:
+                bot_reply = "Kurye başvurusu için 'Söyleyelim Kurye' sayfamızı ziyaret edebilirsiniz."
+            elif 'canlı' in msg_lower or 'temsilci' in msg_lower:
+                bot_reply = "Anlaşıldı. Sizi hemen ilgili birimimize aktarıyorum, lütfen hatta kalın... 🎧"
+            
+            # Eğer bir auto-reply varsa kaydet
+            if bot_reply:
+                ChatMessage.objects.create(
+                    chat_session=chat_session,
+                    sender='admin', # Bot mesajı admin gibi görünsün
+                    message=bot_reply,
+                    is_read=True
+                )
+
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'error'}, status=400)
+
+def chat_api_get_messages(request):
+    # Admin panelinden istek geliyorsa session_id parametresi beklenir
+    if request.user.is_staff and request.GET.get('session_id'):
+         session_id = request.GET.get('session_id')
+         chat_session = get_object_or_404(ChatSession, session_id=session_id)
+    else:
+        chat_session = get_or_create_chat_session(request)
+
+    # Okunmamış mesajları getir (Poll için)
+    # Basitlik adına son 50 mesajı gönderiyoruz
+    messages_qs = ChatMessage.objects.filter(chat_session=chat_session).order_by('timestamp')
+    messages_data = [{
+        'sender': msg.sender,
+        'message': msg.message,
+        'timestamp': msg.timestamp.strftime('%H:%M')
+    } for msg in messages_qs]
+
+    return JsonResponse({'messages': messages_data})
+
+@staff_member_required
+def admin_chat_dashboard(request):
+    # Sadece aktif ve mesajı olan oturumları gösterelim
+    sessions = ChatSession.objects.filter(is_active=True).order_by('-updated_at')
+    return render(request, 'core/admin_chat_dashboard.html', {'sessions': sessions})
+
+@staff_member_required
+def admin_chat_detail(request, session_id):
+    chat_session = get_object_or_404(ChatSession, session_id=session_id)
+    
+    # Admin açtığında kullanıcının mesajlarını okundu yap
+    chat_session.chatmessage_set.filter(sender='user', is_read=False).update(is_read=True)
+    
+    return render(request, 'core/admin_chat_detail.html', {'chat_session': chat_session})
+
+# --- YENİ ÖZELLİK VIEWS (FAVORİ & KUPON) ---
+from .models import Favori, Kupon
+from django.db import IntegrityError
+
+@login_required
+def favori_toggle(request, restoran_id):
+    restoran = get_object_or_404(Restoran, id=restoran_id)
+    favori, created = Favori.objects.get_or_create(user=request.user, restoran=restoran)
+    
+    if not created:
+        # Zaten varsa sil (Toggle mantığı)
+        favori.delete()
+        mesaj = "Favorilerden çıkarıldı."
+        durum = "removed"
+    else:
+        mesaj = "Favorilere eklendi."
+        durum = "added"
+    
+    # AJAX isteği geldiyse JSON dön, yoksa önceki sayfaya dön
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+         return JsonResponse({'status': durum, 'message': mesaj})
+         
+    messages.success(request, f"{restoran.isim} {mesaj}")
+    return redirect(request.META.get('HTTP_REFERER', 'index'))
+
+@login_required
+def favorilerim(request):
+    favoriler = Favori.objects.filter(user=request.user).select_related('restoran')
+    # Sadece restoran objelerini listeye çevirelim
+    restoranlar = [f.restoran for f in favoriler]
+    return render(request, 'core/favorilerim.html', {'restoranlar': restoranlar})
+
+def kupon_uygula(request):
+    if request.method == 'POST':
+        kod = request.POST.get('kod')
+        sepet = _get_cart(request)
+        toplam = sepet.toplam_tutar()
+        
+        try:
+            kupon = Kupon.objects.get(kod=kod, aktif=True)
+            if toplam >= kupon.min_sepet_tutari:
+                request.session['kupon_kod'] = kupon.kod
+                request.session['kupon_indirim'] = kupon.indirim_yuzdesi
+                messages.success(request, f"Tebrikler! %{kupon.indirim_yuzdesi} indirim uygulandı.")
+            else:
+                messages.warning(request, f"Bu kupon için minimum sepet tutarı {kupon.min_sepet_tutari} TL olmalıdır.")
+        except Kupon.DoesNotExist:
+            messages.error(request, "Geçersiz veya süresi dolmuş kupon kodu.")
+            
+    return redirect('sepet_detay')
+
+# --- YENİ ÖZELLİK VIEWS (FAVORİ & KUPON) ---
+from .models import Favori, Kupon
+from django.db import IntegrityError
+
+@login_required
+def favori_toggle(request, restoran_id):
+    restoran = get_object_or_404(Restoran, id=restoran_id)
+    favori, created = Favori.objects.get_or_create(user=request.user, restoran=restoran)
+    
+    if not created:
+        # Zaten varsa sil (Toggle mantığı)
+        favori.delete()
+        mesaj = "Favorilerden çıkarıldı."
+        durum = "removed"
+    else:
+        mesaj = "Favorilere eklendi."
+        durum = "added"
+    
+    # AJAX isteği geldiyse JSON dön, yoksa önceki sayfaya dön
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+         return JsonResponse({'status': durum, 'message': mesaj})
+         
+    messages.success(request, f"{restoran.isim} {mesaj}")
+    return redirect(request.META.get('HTTP_REFERER', 'index'))
+
+@login_required
+def favorilerim(request):
+    favoriler = Favori.objects.filter(user=request.user).select_related('restoran')
+    # Sadece restoran objelerini listeye çevirelim
+    restoranlar = [f.restoran for f in favoriler]
+    return render(request, 'core/favorilerim.html', {'restoranlar': restoranlar})
+
+def kupon_uygula(request):
+    if request.method == 'POST':
+        kod = request.POST.get('kod')
+        sepet = _get_cart(request)
+        toplam = sepet.toplam_tutar()
+        
+        try:
+            kupon = Kupon.objects.get(kod=kod, aktif=True)
+            if toplam >= kupon.min_sepet_tutari:
+                request.session['kupon_kod'] = kupon.kod
+                request.session['kupon_indirim'] = kupon.indirim_yuzdesi
+                messages.success(request, f"Tebrikler! %{kupon.indirim_yuzdesi} indirim uygulandı.")
+            else:
+                messages.warning(request, f"Bu kupon için minimum sepet tutarı {kupon.min_sepet_tutari} TL olmalıdır.")
+        except Kupon.DoesNotExist:
+            messages.error(request, "Geçersiz veya süresi dolmuş kupon kodu.")
+            
+    return redirect('sepet_detay')
+
+# --- KULLANICI PROFİLİ VE KART İŞLEMLERİ ---
+from .models import UserProfile, SavedCard
+
+@login_required
+def kullanici_bilgileri(request):
+    # Profil yoksa oluştur (Signal çalışmazsa diye fallback)
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+
+    if request.method == 'POST':
+        # Form verilerini al
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        telefon = request.POST.get('telefon')
+        adres = request.POST.get('adres')
+        
+        # User modelini güncelle
+        user = request.user
+        user.first_name = first_name
+        user.last_name = last_name
+        user.email = email
+        user.save()
+        
+        # Profil modelini güncelle
+        profile.telefon = telefon
+        profile.adres = adres
+        profile.save()
+        
+        messages.success(request, 'Bilgileriniz başarıyla güncellendi.')
+        return redirect('kullanici_bilgileri')
+        
+    return render(request, 'core/kullanici_bilgileri.html')
+
+@login_required
+def kayitli_kartlarim(request):
+    kartlar = SavedCard.objects.filter(user=request.user)
+    return render(request, 'core/kayitli_kartlarim.html', {'kartlar': kartlar})
+
+@login_required
+def kart_ekle(request):
+    if request.method == 'POST':
+        kart_adi = request.POST.get('kart_adi')
+        kart_sahibi = request.POST.get('kart_sahibi')
+        kart_numarasi = request.POST.get('kart_numarasi') # Demo: Maskeleme yapılacak
+        ay = request.POST.get('ay')
+        yil = request.POST.get('yil')
+        
+        # Basit maskeleme (Son 4 hane hariç yıldızla)
+        masked_num = "**** **** **** " + kart_numarasi[-4:] if len(kart_numarasi) >= 16 else kart_numarasi
+        
+        SavedCard.objects.create(
+            user=request.user,
+            kart_adi=kart_adi,
+            kart_sahibi=kart_sahibi,
+            kart_numarasi=masked_num,
+            son_kullanma_ay=ay,
+            son_kullanma_yil=yil
+        )
+        
+        messages.success(request, 'Kartınız başarıyla eklendi.')
+        return redirect('kayitli_kartlarim')
+    return redirect('kayitli_kartlarim')
+
+@login_required
+def kart_sil(request, id):
+    kart = get_object_or_404(SavedCard, id=id, user=request.user)
+    kart.delete()
+    messages.info(request, 'Kart silindi.')
+    return redirect('kayitli_kartlarim')

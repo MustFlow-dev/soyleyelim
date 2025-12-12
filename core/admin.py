@@ -92,3 +92,33 @@ class YorumAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'restoran', 'puan', 'tarih')
     list_filter = ('puan', 'tarih')
     search_fields = ('user__username', 'restoran__isim', 'yorum')
+
+# --- 6. CANLI DESTEK YÖNETİMİ ---
+from .models import ChatSession, ChatMessage
+from django.urls import reverse
+
+@admin.register(ChatSession)
+class ChatSessionAdmin(admin.ModelAdmin):
+    list_display = ('customer_name', 'session_id_short', 'is_active', 'updated_at', 'go_to_chat_button')
+    list_filter = ('is_active', 'created_at')
+    search_fields = ('customer_name', 'session_id')
+    
+    def session_id_short(self, obj):
+        return obj.session_id[:8] + "..."
+    session_id_short.short_description = "Oturum ID"
+
+    def go_to_chat_button(self, obj):
+        url = reverse('admin_chat_detail', args=[obj.session_id])
+        return format_html('<a class="button" href="{}" style="background-color: #28a745; color: white; padding: 5px 10px; border-radius: 5px; text-decoration: none;">💬 Sohbete Git</a>', url)
+    go_to_chat_button.short_description = "İşlem"
+    go_to_chat_button.allow_tags = True
+
+@admin.register(ChatMessage)
+class ChatMessageAdmin(admin.ModelAdmin):
+    list_display = ('chat_session', 'sender', 'message_short', 'timestamp', 'is_read')
+    list_filter = ('sender', 'is_read', 'timestamp')
+    search_fields = ('message',)
+
+    def message_short(self, obj):
+        return obj.message[:50]
+    message_short.short_description = "Mesaj"

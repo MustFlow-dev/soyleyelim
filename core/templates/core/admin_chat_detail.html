@@ -1,0 +1,127 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container py-5" style="max-height: 90vh;">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Sohbet: {{ chat_session.customer_name }}</h3>
+        <a href="{% url 'admin_chat_dashboard' %}" class="btn btn-outline-secondary btn-sm"><i
+                class="fas fa-arrow-left"></i> Paneli Dön</a>
+    </div>
+
+    <div class="card shadow-lg" style="height: 600px;">
+        <div class="card-body p-0 d-flex flex-column h-100">
+            <!-- Messages Area -->
+            <div id="admin-chat-messages" class="flex-grow-1 p-4" style="overflow-y: auto; background-color: #f8f9fa;">
+                <!-- Messages will be loaded here via JS -->
+            </div>
+
+            <!-- Input Area -->
+            <div class="p-3 bg-white border-top">
+                <form id="admin-chat-form" class="d-flex gap-2">
+                    <input type="text" id="admin-chat-input" class="form-control" placeholder="Yanıt yazın..." required
+                        autocomplete="off">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Gönder</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .message-bubble {
+        max-width: 70%;
+        padding: 10px 15px;
+        border-radius: 15px;
+        margin-bottom: 15px;
+        position: relative;
+    }
+
+    .message-user {
+        background-color: #e9ecef;
+        color: #333;
+        align-self: flex-start;
+        border-bottom-left-radius: 2px;
+    }
+
+    .message-admin {
+        background-color: var(--primary-color);
+        color: white;
+        align-self: flex-end;
+        border-bottom-right-radius: 2px;
+        margin-left: auto;
+    }
+
+    .msg-timestamp {
+        font-size: 0.7rem;
+        opacity: 0.7;
+        margin-top: 5px;
+        display: block;
+        text-align: right;
+    }
+</style>
+
+<script>
+    const sessionId = "{{ chat_session.session_id }}";
+    const messagesDiv = document.getElementById('admin-chat-messages');
+
+    // Load messages initially
+    loadMessages();
+
+    // Poll for messages every 1 second for real-time feel
+    setInterval(loadMessages, 1000);
+
+    // Send Message
+    document.getElementById('admin-chat-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const input = document.getElementById('admin-chat-input');
+        const text = input.value.trim();
+
+        if (text) {
+            fetch('/api/chat/send/', {
+                method: 'POST',
+                body: JSON.stringify({
+                    'message': text,
+                    'sender': 'admin',
+                    'session_id': sessionId
+                }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        input.value = '';
+                        loadMessages(); // Reload immediately
+                    }
+                });
+        }
+    });
+
+    function loadMessages() {
+        fetch(`/api/chat/get/?session_id=${sessionId}`)
+            .then(response => response.json())
+            .then(data => {
+                const messages = data.messages;
+                let html = '';
+
+                messages.forEach(msg => {
+                    const typeClass = msg.sender === 'admin' ? 'message-admin' : 'message-user';
+                    html += `
+                    <div class="message-bubble ${typeClass}">
+                        ${msg.message}
+                        <span class="msg-timestamp">${msg.timestamp}</span>
+                    </div>
+                `;
+                });
+
+                // Only update if content changed prevents scrolling glitch (simple check)
+                if (messagesDiv.innerHTML.length !== html.length + 20) { // rough check
+                    messagesDiv.innerHTML = html;
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                }
+            });
+    }
+</script>
+{% endblock %}

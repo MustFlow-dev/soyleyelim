@@ -183,3 +183,112 @@ class Yorum(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.restoran.isim} ({self.puan})"
+
+# --- CANLI DESTEK MODELLERİ ---
+
+class ChatSession(models.Model):
+    session_id = models.CharField(max_length=100, unique=True, verbose_name="Oturum ID")
+    customer_name = models.CharField(max_length=100, blank=True, verbose_name="Müşteri Adı", default="Ziyaretçi")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Oluşturulma Tarihi")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Son Güncelleme")
+    is_active = models.BooleanField(default=True, verbose_name="Aktif mi?")
+
+    class Meta:
+        verbose_name = "Sohbet Oturumu"
+        verbose_name_plural = "Sohbet Oturumları"
+        ordering = ['-updated_at']
+
+    def __str__(self):
+        return f"{self.customer_name} ({self.session_id[:8]})"
+    
+    @property
+    def unread_count_for_admin(self):
+        return self.chatmessage_set.filter(sender='user', is_read=False).count()
+
+class ChatMessage(models.Model):
+    chat_session = models.ForeignKey(ChatSession, on_delete=models.CASCADE, verbose_name="Oturum")
+    sender = models.CharField(max_length=10, choices=[('user', 'Kullanıcı'), ('admin', 'Admin')], verbose_name="Gönderen")
+    message = models.TextField(verbose_name="Mesaj")
+    timestamp = models.DateTimeField(auto_now_add=True, verbose_name="Zaman")
+    is_read = models.BooleanField(default=False, verbose_name="Okundu mu?")
+
+    class Meta:
+        verbose_name = "Mesaj"
+        verbose_name_plural = "Mesajlar"
+        ordering = ['timestamp']
+
+    def __str__(self):
+        return f"{self.sender}: {self.message[:20]}"
+
+# --- YENİ ÖZELLİKLER (FAVORİLER & KUPONLAR) ---
+
+class Favori(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Kullanıcı")
+    restoran = models.ForeignKey(Restoran, on_delete=models.CASCADE, verbose_name="Restoran")
+    tarih = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Favori"
+        verbose_name_plural = "Favoriler"
+        unique_together = ('user', 'restoran') # Aynı restoranı bir daha favorileyemesin
+
+    def __str__(self):
+        return f"{self.user.username} - {self.restoran.isim}"
+
+class Kupon(models.Model):
+    kod = models.CharField(max_length=50, unique=True, verbose_name="Kupon Kodu")
+    indirim_yuzdesi = models.PositiveIntegerField(verbose_name="İndirim Yüzdesi (%)", help_text="Örn: 10 yazarsanız %10 indirim yapar.")
+    min_sepet_tutari = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="Min. Sepet Tutarı")
+    aktif = models.BooleanField(default=True, verbose_name="Aktif mi?")
+    
+    def __str__(self):
+        return f"{self.kod} (%{self.indirim_yuzdesi})"
+
+    class Meta:
+        verbose_name = "Kupon"
+        verbose_name_plural = "Kuponlar"
+
+# --- YENİ EKLENEN MODELLER: KULLANICI PROFİLİ VE KARTLAR ---
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile', verbose_name="Kullanıcı")
+    telefon = models.CharField(max_length=20, blank=True, verbose_name="Telefon")
+    adres = models.TextField(blank=True, verbose_name="Varsayılan Adres")
+    dogum_tarihi = models.DateField(null=True, blank=True, verbose_name="Doğum Tarihi")
+
+    def __str__(self):
+        return f"{self.user.username} Profili"
+
+    class Meta:
+        verbose_name = "Kullanıcı Profili"
+        verbose_name_plural = "Kullanıcı Profilleri"
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()
+
+class SavedCard(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Kullanıcı")
+    kart_adi = models.CharField(max_length=50, verbose_name="Kartın Adı", help_text="Örn: İş Bankası Maaş")
+    kart_sahibi = models.CharField(max_length=100, verbose_name="Kart Sahibi")
+    kart_numarasi = models.CharField(max_length=20, verbose_name="Kart Numarası (Maskelenmiş)")
+    son_kullanma_ay = models.CharField(max_length=2, verbose_name="Ay")
+    son_kullanma_yil = models.CharField(max_length=4, verbose_name="Yıl")
+    
+    # Gerçek uygulamada kart numarası asla böyle saklanmaz, token saklanır.
+    # Bu basit bir demo olduğu için sadece son 4 haneyi göstereceğiz.
+    
+    def __str__(self):
+        return f"{self.kart_adi} - {self.user.username}"
+
+    class Meta:
+        verbose_name = "Kayıtlı Kart"
+        verbose_name_plural = "Kayıtlı Kartlar"
