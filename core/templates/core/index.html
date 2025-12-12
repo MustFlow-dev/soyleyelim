@@ -1,121 +1,317 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Söyleyelim | Kapındaki Lezzet</title>
-    
-    <link rel="icon" href="https://ui-avatars.com/api/?name=S&background=ff6b00&color=fff&size=128&font-size=0.6&rounded=true" type="image/png">
+
+    <link rel="icon"
+        href="https://ui-avatars.com/api/?name=S&background=ff6b00&color=fff&size=128&font-size=0.6&rounded=true"
+        type="image/png">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        :root { --primary-color: #ff6b00; --dark-bg: #2d3436; }
-        body { background-color: #fff3e0; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; min-height: 100vh; }
-        
-        /* Navbar */
-        .navbar { background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .navbar-brand { color: var(--primary-color) !important; font-weight: 800; letter-spacing: -1px; }
 
-        /* --- GÜNCELLENEN PARTNER BUTONU STİLİ --- */
-        .nav-link-partner { 
-            color: #ff6b00 !important;       /* Yazı Rengi: Turuncu */
-            background-color: white;         /* Arka Plan: Beyaz */
-            border: 2px solid #ff6b00;       /* Çerçeve: Turuncu */
-            padding: 8px 25px;               /* İç Boşluk */
-            border-radius: 50px;             /* Yuvarlak Kenarlar */
-            font-weight: 700; 
-            text-decoration: none; 
-            transition: all 0.3s ease;       /* Yumuşak Geçiş */
+    <style>
+        :root {
+            --primary-color: #ff6b00;
+            --dark-bg: #2d3436;
+        }
+
+        body {
+            background-color: #fff3e0;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        /* Partner Butonu */
+        .nav-link-partner {
+            color: #ff6b00 !important;
+            background-color: white;
+            border: 2px solid #ff6b00;
+            padding: 8px 25px;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
             display: inline-block;
         }
-        
-        /* Mouse üzerine gelince */
-        .nav-link-partner:hover { 
-            color: white !important;         /* Yazı Rengi: Beyaz */
-            background-color: #ff6b00;       /* Arka Plan: Turuncu */
-            box-shadow: 0 5px 15px rgba(255, 107, 0, 0.3); /* Hafif gölge */
-            transform: translateY(-2px);     /* Çok hafif yukarı kalkma efekti */
+
+        .nav-link-partner:hover {
+            color: white !important;
+            background-color: #ff6b00;
+            box-shadow: 0 5px 15px rgba(255, 107, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* --- SEPET BUTONU STİLİ --- */
+        .btn-sepet {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-sepet:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 107, 0, 0.3);
+        }
+
+        .btn-sepet i {
+            font-size: 1.1rem;
+        }
+
+        .sepet-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #dc3545;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
         }
 
         /* Hero Banner */
         .hero-section {
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
-            background-size: cover; background-position: center;
-            height: 350px; display: flex; align-items: center; justify-content: center;
-            color: white; border-radius: 0 0 40px 40px;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 350px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            border-radius: 0 0 40px 40px;
             margin-bottom: 30px;
         }
-        .search-box input { border-radius: 50px 0 0 50px; border: none; padding: 15px 30px; }
-        .search-box button { border-radius: 0 50px 50px 0; background-color: var(--primary-color); border: none; padding: 15px 30px; font-weight: bold; color: white;}
+
+        .search-box input {
+            border-radius: 50px 0 0 50px;
+            border: none;
+            padding: 15px 30px;
+        }
+
+        .search-box button {
+            border-radius: 0 50px 50px 0;
+            background-color: var(--primary-color);
+            border: none;
+            padding: 15px 30px;
+            font-weight: bold;
+            color: white;
+        }
 
         /* Mobil Uygulama Banner */
         .app-banner {
             background: linear-gradient(135deg, #ff9f43 0%, #ff6b00 100%);
             border-radius: 35px;
-            padding: 30px; margin: 20px 0; color: white;
-            position: relative; overflow: hidden;
+            padding: 30px;
+            margin: 20px 0;
+            color: white;
+            position: relative;
+            overflow: hidden;
         }
 
-        /* --- FİLTRE SIDEBAR --- */
+        /* Filtre Sidebar */
         .filter-sidebar {
             background: white;
             padding: 25px;
             border-radius: 35px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.03);
             position: sticky;
             top: 100px;
             border: 1px solid #f1f1f1;
         }
-        .filter-title { font-weight: 700; color: #2d3436; margin-bottom: 15px; font-size: 1.1rem; }
-        
-        /* Checkbox ve Radio Butonları Özelleştirme */
-        .form-check-input:checked { background-color: var(--primary-color); border-color: var(--primary-color); }
-        .form-check-input:focus { box-shadow: none !important; border-color: var(--primary-color); }
-        .form-check-label { color: #636e72; font-weight: 500; cursor: pointer; }
-        .form-check-label:hover { color: var(--primary-color); }
-        
-        .cuisine-list { max-height: 400px; overflow-y: auto; padding-right: 5px; }
-        .cuisine-list::-webkit-scrollbar { width: 5px; }
-        .cuisine-list::-webkit-scrollbar-thumb { background: #ddd; border-radius: 10px; }
+
+        .filter-title {
+            font-weight: 700;
+            color: #2d3436;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .form-check-input:focus {
+            box-shadow: none !important;
+            border-color: var(--primary-color);
+        }
+
+        .form-check-label {
+            color: #636e72;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .form-check-label:hover {
+            color: var(--primary-color);
+        }
+
+        .cuisine-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .cuisine-list::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .cuisine-list::-webkit-scrollbar-thumb {
+            background: #ddd;
+            border-radius: 10px;
+        }
 
         /* Kategoriler */
-        .category-item { text-align: center; cursor: pointer; transition: transform 0.2s; min-width: 80px; }
-        .category-item:hover { transform: translateY(-5px); }
-        .cat-icon { 
-            width: 60px; height: 60px; background: white; border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; 
-            margin: 0 auto 5px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-size: 20px; color: var(--dark-bg);
+        .category-item {
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+            min-width: 80px;
         }
 
-        /* --- RESTORAN KARTLARI (YUVARLAK) --- */
+        .category-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .cat-icon {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-size: 20px;
+            color: var(--dark-bg);
+        }
+
+        /* Restoran Kartları */
         .restaurant-card {
-            border: none; 
-            border-radius: 35px; /* Yuvarlak Köşeler */
+            border: none;
+            border-radius: 35px;
             background: white;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            overflow: hidden; height: 100%; text-decoration: none; display: block; color: inherit;
+            overflow: hidden;
+            height: 100%;
+            text-decoration: none;
+            display: block;
+            color: inherit;
         }
-        .restaurant-card:hover { transform: translateY(-8px); box-shadow: 0 15px 40px rgba(0,0,0,0.15); }
-        
-        .card-img-wrapper { height: 200px; overflow: hidden; position: relative; }
-        .card-img-top { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
-        .restaurant-card:hover .card-img-top { transform: scale(1.08); } 
 
-        .badge-rating { position: absolute; top: 20px; right: 20px; background: white; padding: 5px 15px; border-radius: 30px; font-weight: bold; color: #27ae60; box-shadow: 0 4px 10px rgba(0,0,0,0.1); font-size: 0.9rem; }
-        
-        .card-body { padding: 25px; }
-        .rest-name { font-weight: 800; font-size: 1.2rem; color: #2d3436; margin-bottom: 5px; }
-        .delivery-free { color: #27ae60; font-size: 0.85rem; font-weight: 700; }
+        .restaurant-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-img-wrapper {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card-img-top {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .restaurant-card:hover .card-img-top {
+            transform: scale(1.08);
+        }
+
+        .badge-rating {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-weight: bold;
+            color: #27ae60;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            font-size: 0.9rem;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        .rest-name {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: #2d3436;
+            margin-bottom: 5px;
+        }
+
+        .delivery-free {
+            color: #27ae60;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
 
         /* Butonlar */
-        .btn-giris { border: 2px solid var(--primary-color); color: var(--primary-color); font-weight: 600; border-radius: 20px; }
-        .btn-giris:hover { background-color: var(--primary-color); color: white; }
-        .btn-primary-custom { background-color: var(--primary-color); color: white; border-radius: 20px; font-weight: 600; border: none; padding: 8px 20px;}
+        .btn-giris {
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 600;
+            border-radius: 20px;
+        }
+
+        .btn-giris:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary-custom {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 20px;
+            font-weight: 600;
+            border: none;
+            padding: 8px 20px;
+        }
     </style>
 </head>
+
 <body>
 
     <nav class="navbar navbar-expand-lg sticky-top py-3">
@@ -123,27 +319,66 @@
             <a class="navbar-brand fs-3" href="{% url 'index' %}">
                 Söyleyelim
             </a>
-            
+
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            
+
             <div class="collapse navbar-collapse" id="navbarNav">
-                
+
                 <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link-partner" href="{% url 'partner' %}">Restoran Sahibi Ol</a>
                     </li>
                 </ul>
-                
+
                 <ul class="navbar-nav gap-3 align-items-center">
+
                     {% if user.is_authenticated %}
-                        <li class="nav-item fw-bold text-secondary"><i class="fas fa-user-circle me-1"></i> {{ user.username }}</li>
-                        <li class="nav-item"><a class="btn btn-outline-danger btn-sm px-4 rounded-pill" href="{% url 'cikis' %}">Çıkış</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle fw-bold d-flex align-items-center" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false" style="color: #ff6b00 !important;">
+                            <i class="fas fa-user mb-1 me-2"></i> Hesabım
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0"
+                            style="min-width: 260px; border-radius: 15px; padding: 10px; margin-top: 10px;">
+                            <li class="px-3 py-2 border-bottom text-center mb-2">
+                                <div class="small text-muted mb-1">{{ user.email|default:user.username }}</div>
+                            </li>
+                            <li><a class="dropdown-item py-2 d-flex align-items-center rounded"
+                                    href="{% url 'siparislerim' %}">
+                                    Siparişlerim
+                                </a></li>
+                            <li><a class="dropdown-item py-2 d-flex align-items-center rounded" href="#">
+                                    Kullanıcı Bilgilerim
+                                </a></li>
+                            <li><a class="dropdown-item py-2 d-flex align-items-center rounded" href="#">
+                                    Kayıtlı Kartlarım
+                                </a></li>
+                            <li>
+                                <hr class="dropdown-divider my-2">
+                            </li>
+                            <li><a class="dropdown-item py-2 d-flex align-items-center rounded text-danger"
+                                    href="{% url 'cikis' %}">
+                                    <div style="width: 30px;"><i class="fas fa-sign-out-alt"></i></div> Çıkış Yap
+                                </a></li>
+                        </ul>
+                    </li>
                     {% else %}
-                        <li class="nav-item"><a class="btn btn-giris btn-sm px-4" href="{% url 'giris' %}">Giriş</a></li>
-                        <li class="nav-item"><a class="btn btn-primary-custom btn-sm" href="{% url 'kayit' %}">Kayıt Ol</a></li>
+                    <li class="nav-item"><a class="btn btn-giris btn-sm px-4" href="{% url 'giris' %}">Giriş</a></li>
+                    <li class="nav-item"><a class="btn btn-primary-custom btn-sm" href="{% url 'kayit' %}">Kayıt Ol</a>
+                    </li>
                     {% endif %}
+
+                    <li class="nav-item ms-2">
+                        <a class="btn-sepet position-relative" href="{% url 'sepet_detay' %}">
+                            <i class="fas fa-shopping-basket"></i>
+                            {% if global_sepet_adet > 0 %}
+                            <span class="sepet-badge">{{ global_sepet_adet }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+
                 </ul>
 
             </div>
@@ -156,7 +391,8 @@
             <div class="row justify-content-center">
                 <div class="col-md-8">
                     <form class="d-flex search-box shadow-lg">
-                        <input type="text" class="form-control form-control-lg" placeholder="Yemek veya restoran ara...">
+                        <input type="text" class="form-control form-control-lg"
+                            placeholder="Yemek veya restoran ara...">
                         <button type="button">BUL</button>
                     </form>
                 </div>
@@ -165,26 +401,76 @@
     </div>
 
     <div class="container mb-4">
+        <!-- Bildirim Alanı -->
+        <!-- Bildirim Alanı (Fixed Top) -->
+        {% if messages %}
+        <div
+            style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 90%; max-width: 600px;">
+            {% for message in messages|slice:":1" %}
+            <div id="auto-toast" class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-lg border-0"
+                role="alert"
+                style="border-radius: 50px; background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); color: #2d3436; font-weight: 600;">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-check-circle text-success fs-4 me-3"></i>
+                    <div>{{ message }}</div>
+                </div>
+                <!-- <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> -->
+            </div>
+            <script>
+                // 6 Saniye sonra yavaşça kapat
+                setTimeout(function () {
+                    var toastElement = document.getElementById('auto-toast');
+                    if (toastElement) {
+                        toastElement.style.transition = "opacity 1s ease-out";
+                        toastElement.style.opacity = "0";
+                        setTimeout(function () {
+                            toastElement.remove();
+                        }, 1000);
+                    }
+                }, 6000);
+            </script>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         <div class="d-flex justify-content-between overflow-auto gap-4 py-3" style="scrollbar-width: none;">
-            <div class="category-item"><div class="cat-icon"><i class="fas fa-hamburger"></i></div><span class="fw-bold text-secondary small">Burger</span></div>
-            <div class="category-item"><div class="cat-icon"><i class="fas fa-pizza-slice"></i></div><span class="fw-bold text-secondary small">Pizza</span></div>
-            <div class="category-item"><div class="cat-icon"><i class="fas fa-drumstick-bite"></i></div><span class="fw-bold text-secondary small">Tavuk</span></div>
-            <div class="category-item"><div class="cat-icon"><i class="fas fa-utensils"></i></div><span class="fw-bold text-secondary small">Kebap</span></div>
-            <div class="category-item"><div class="cat-icon"><i class="fas fa-coffee"></i></div><span class="fw-bold text-secondary small">Tatlı</span></div>
-            <div class="category-item"><div class="cat-icon"><i class="fas fa-leaf"></i></div><span class="fw-bold text-secondary small">Sağlıklı</span></div>
+            <div class="category-item">
+                <div class="cat-icon"><i class="fas fa-hamburger"></i></div><span
+                    class="fw-bold text-secondary small">Burger</span>
+            </div>
+            <div class="category-item">
+                <div class="cat-icon"><i class="fas fa-pizza-slice"></i></div><span
+                    class="fw-bold text-secondary small">Pizza</span>
+            </div>
+            <div class="category-item">
+                <div class="cat-icon"><i class="fas fa-drumstick-bite"></i></div><span
+                    class="fw-bold text-secondary small">Tavuk</span>
+            </div>
+            <div class="category-item">
+                <div class="cat-icon"><i class="fas fa-utensils"></i></div><span
+                    class="fw-bold text-secondary small">Kebap</span>
+            </div>
+            <div class="category-item">
+                <div class="cat-icon"><i class="fas fa-coffee"></i></div><span
+                    class="fw-bold text-secondary small">Tatlı</span>
+            </div>
+            <div class="category-item">
+                <div class="cat-icon"><i class="fas fa-leaf"></i></div><span
+                    class="fw-bold text-secondary small">Sağlıklı</span>
+            </div>
         </div>
     </div>
 
     <div class="container pb-5">
         <div class="row">
-            
+
             <div class="col-lg-3 mb-4">
                 <div class="filter-sidebar">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="filter-title mb-0">Sırala</h5>
                         <small class="text-muted" style="cursor:pointer">Temizle</small>
                     </div>
-                    
+
                     <div class="mb-4">
                         <div class="form-check mb-2">
                             <input class="form-check-input" type="radio" name="sortOrder" id="sortRec" checked>
@@ -208,8 +494,10 @@
 
                     <h5 class="filter-title mt-4">Mutfaklar</h5>
                     <div class="input-group mb-3">
-                        <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-muted small"></i></span>
-                        <input type="text" class="form-control bg-light border-start-0" placeholder="Mutfak ara..." style="font-size: 0.9rem;">
+                        <span class="input-group-text bg-light border-end-0"><i
+                                class="fas fa-search text-muted small"></i></span>
+                        <input type="text" class="form-control bg-light border-start-0" placeholder="Mutfak ara..."
+                            style="font-size: 0.9rem;">
                     </div>
 
                     <div class="cuisine-list">
@@ -259,23 +547,30 @@
             </div>
 
             <div class="col-lg-9">
-                
+
                 <div class="app-banner shadow mb-4">
                     <div class="row align-items-center">
                         <div class="col-md-8">
                             <h3 class="fw-bold mb-1">Söyleyelim Cebinde!</h3>
                             <p class="mb-2 opacity-90 small">Uygulamayı indir, sana özel indirimleri kaçırma.</p>
                             <div class="d-flex gap-2">
-                                <button class="btn btn-dark d-flex align-items-center px-2 py-1 rounded-3 border-0 btn-sm">
-                                    <i class="fab fa-apple fa-lg me-2"></i> <div class="text-start lh-1"><small style="font-size:8px">Download on the</small><br><span style="font-size:12px">App Store</span></div>
+                                <button
+                                    class="btn btn-dark d-flex align-items-center px-2 py-1 rounded-3 border-0 btn-sm">
+                                    <i class="fab fa-apple fa-lg me-2"></i>
+                                    <div class="text-start lh-1"><small style="font-size:8px">Download on
+                                            the</small><br><span style="font-size:12px">App Store</span></div>
                                 </button>
-                                <button class="btn btn-dark d-flex align-items-center px-2 py-1 rounded-3 border-0 btn-sm">
-                                    <i class="fab fa-google-play fa-lg me-2"></i> <div class="text-start lh-1"><small style="font-size:8px">GET IT ON</small><br><span style="font-size:12px">Google Play</span></div>
+                                <button
+                                    class="btn btn-dark d-flex align-items-center px-2 py-1 rounded-3 border-0 btn-sm">
+                                    <i class="fab fa-google-play fa-lg me-2"></i>
+                                    <div class="text-start lh-1"><small style="font-size:8px">GET IT ON</small><br><span
+                                            style="font-size:12px">Google Play</span></div>
                                 </button>
                             </div>
                         </div>
                         <div class="col-md-4 text-center d-none d-md-block">
-                            <i class="fas fa-mobile-alt" style="font-size: 100px; transform: rotate(15deg); opacity: 0.8;"></i>
+                            <i class="fas fa-mobile-alt"
+                                style="font-size: 100px; transform: rotate(15deg); opacity: 0.8;"></i>
                         </div>
                     </div>
                 </div>
@@ -284,34 +579,41 @@
                     <h4 class="fw-bold" style="color: #2d3436;">Tüm Restoranlar</h4>
                     <span class="text-muted small">İstanbul, Kadıköy <i class="fas fa-chevron-down ms-1"></i></span>
                 </div>
-                
+
                 <div class="row g-4 mb-5">
                     {% for restoran in restoranlar %}
                     <div class="col-md-6 col-lg-4">
                         <a href="{% url 'restoran_detay' restoran.id %}" class="restaurant-card shadow-sm">
                             <div class="card-img-wrapper">
                                 {% if restoran.resim_linki %}
-                                    <img src="{{ restoran.resim_linki }}" class="card-img-top" alt="{{ restoran.isim }}">
+                                <img src="{{ restoran.resim_linki }}" class="card-img-top" alt="{{ restoran.isim }}">
                                 {% else %}
-                                    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center text-white display-6"><i class="fas fa-store"></i></div>
+                                <div
+                                    class="card-img-top bg-secondary d-flex align-items-center justify-content-center text-white display-6">
+                                    <i class="fas fa-store"></i>
+                                </div>
                                 {% endif %}
                                 <div class="badge-rating"><i class="fas fa-star me-1"></i>4.5</div>
                             </div>
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <h5 class="rest-name mb-0">{{ restoran.isim }}</h5>
-                                    <span class="badge bg-light text-dark border"><i class="far fa-clock me-1"></i> 20-30 dk</span>
+                                    <span class="badge bg-light text-dark border"><i class="far fa-clock me-1"></i>
+                                        20-30 dk</span>
                                 </div>
                                 <p class="rest-desc small text-muted mb-2">{{ restoran.aciklama|truncatechars:60 }}</p>
                                 <div class="d-flex justify-content-between align-items-center border-top pt-2 mt-2">
-                                    <span class="delivery-free"><i class="fas fa-motorcycle me-1"></i> Ücretsiz Teslimat</span>
+                                    <span class="delivery-free"><i class="fas fa-motorcycle me-1"></i> Ücretsiz
+                                        Teslimat</span>
                                     <small class="text-muted fw-bold">Min. 150 TL</small>
                                 </div>
                             </div>
                         </a>
                     </div>
                     {% empty %}
-                        <div class="col-12 text-center py-5"><p class="text-muted">Henüz restoran yok.</p></div>
+                    <div class="col-12 text-center py-5">
+                        <p class="text-muted">Henüz restoran yok.</p>
+                    </div>
                     {% endfor %}
                 </div>
             </div>
@@ -327,4 +629,5 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

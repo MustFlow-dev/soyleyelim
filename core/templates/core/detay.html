@@ -1,102 +1,326 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ restoran.isim }} | Söyleyelim</title>
-    
-    <link rel="icon" href="https://ui-avatars.com/api/?name=S&background=ff6b00&color=fff&size=128&font-size=0.6&rounded=true" type="image/png">
+
+    <link rel="icon"
+        href="https://ui-avatars.com/api/?name=S&background=ff6b00&color=fff&size=128&font-size=0.6&rounded=true"
+        type="image/png">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        /* GÜNCELLENDİ: Arka plan rengi turuncu (#fff3e0) yapıldı */
-        body { background-color: #fff3e0; font-family: 'Segoe UI', sans-serif; }
-        
-        /* Kapak Fotoğrafı */
-        .restaurant-header {
-            position: relative; height: 320px;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.8)), 
-                        url('{% if restoran.resim_linki %}{{ restoran.resim_linki }}{% else %}https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80{% endif %}');
-            background-size: cover; background-position: center;
-            color: white; display: flex; align-items: flex-end; padding-bottom: 30px;
-        }
 
-        /* Geri Butonu */
-        .btn-back { position: absolute; top: 20px; left: 20px; background: rgba(255,255,255,0.95); border: none; border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; color: #333; transition: 0.2s; text-decoration: none; z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .btn-back:hover { transform: scale(1.1); background: white; }
-
-        /* Yemek Kartı (Liste Görünümü) */
-        .food-item-card {
-            background: white; border-radius: 15px; overflow: hidden;
-            transition: transform 0.2s, box-shadow 0.2s; border: 1px solid #f1f1f1;
-            cursor: pointer; text-decoration: none; color: inherit; display: block;
-            height: 100%;
-        }
-        .food-item-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.08); border-color: #ff6b00; }
-        
-        .food-price { color: #ff6b00; font-weight: 800; font-size: 1.1rem; }
-        .btn-add-mini { width: 32px; height: 32px; background: #f8f9fa; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #ff6b00; border: 1px solid #eee; transition: 0.2s; }
-        .food-item-card:hover .btn-add-mini { background: #ff6b00; color: white; border-color: #ff6b00; }
-    </style>
 </head>
+<style>
+    /* GÜNCELLENDİ: Arka plan rengi turuncu (#fff3e0) yapıldı */
+    body {
+        background-color: #fff3e0;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    /* Kapak Fotoğrafı */
+    .restaurant-header {
+        position: relative;
+        height: 320px;
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)),
+        url('{% if restoran.resim_linki %}{{ restoran.resim_linki }}{% else %}https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80{% endif %}');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        display: flex;
+        align-items: flex-end;
+        padding-bottom: 30px;
+    }
+
+    /* Geri Butonu */
+    .btn-back {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: rgba(255, 255, 255, 0.95);
+        border: none;
+        border-radius: 50%;
+        width: 45px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+        transition: 0.2s;
+        text-decoration: none;
+        z-index: 10;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-back:hover {
+        transform: scale(1.1);
+        background: white;
+    }
+
+    /* Yeni Header Rozetleri */
+    .rating-badge {
+        background-color: #16a34a;
+        /* Yeşil */
+        color: white;
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-weight: bold;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .reviews-btn {
+        background-color: white;
+        color: #ff6b00;
+        border: 2px solid #ff6b00;
+        padding: 5px 15px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: 0.2s;
+        cursor: pointer;
+    }
+
+    .reviews-btn:hover {
+        background-color: #fff3e0;
+        color: #e65100;
+    }
+
+    .info-dot {
+        font-size: 4px;
+        vertical-align: middle;
+        margin: 0 8px;
+    }
+
+    /* Tablo Görünümü (Tabs) */
+    .nav-tabs .nav-link {
+        color: #666;
+        border: none;
+        padding: 10px 20px;
+        font-weight: 600;
+    }
+
+    .nav-tabs .nav-link.active {
+        color: #ff6b00;
+        background: transparent;
+        border-bottom: 3px solid #ff6b00;
+    }
+
+    /* Yemek Kartı */
+    .food-item-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: transform 0.2s, box-shadow 0.2s;
+        border: 1px solid #f1f1f1;
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        height: 100%;
+    }
+
+    .food-item-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        border-color: #ff6b00;
+    }
+
+    .food-price {
+        color: #ff6b00;
+        font-weight: 800;
+        font-size: 1.1rem;
+    }
+
+    .btn-add-mini {
+        width: 32px;
+        height: 32px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ff6b00;
+        border: 1px solid #eee;
+        transition: 0.2s;
+    }
+
+    .food-item-card:hover .btn-add-mini {
+        background: #ff6b00;
+        color: white;
+        border-color: #ff6b00;
+    }
+</style>
+
+
 <body>
 
     <header class="restaurant-header shadow">
         <a href="{% url 'index' %}" class="btn-back"><i class="fas fa-arrow-left"></i></a>
+
+        <!-- Sepet Butonu Eklendi -->
+        <a href="{% url 'sepet_detay' %}" class="btn-back" style="left: auto; right: 20px;">
+            <i class="fas fa-shopping-basket" style="color: #ff6b00;"></i>
+            {% if global_sepet_adet > 0 %}
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                style="font-size: 0.6rem;">
+                {{ global_sepet_adet }}
+            </span>
+            {% endif %}
+        </a>
         <div class="container">
             <div class="d-flex justify-content-between align-items-end">
-                <div>
-                    <h1 class="display-5 fw-bold mb-1">{{ restoran.isim }}</h1>
-                    <div class="d-flex gap-2 text-white-50 small fw-bold">
-                        <span><i class="fas fa-star text-warning me-1"></i>4.5 (500+)</span>
-                        <span>•</span>
-                        <span>Min. 150 TL</span>
-                        <span>•</span>
-                        <span>20-30 dk</span>
+                <div class="w-100">
+                    <h1 class="display-5 fw-bold mb-3 text-shadow">{{ restoran.isim }}</h1>
+
+                    <!-- Yeni Bilgi Satırı -->
+                    <div class="d-flex align-items-center gap-3 mb-1 flex-wrap">
+                        <span class="text-white fw-500">Burger, Tost & Sandviç, Sokak Lezzetleri</span>
+                        <span class="info-dot"><i class="fas fa-circle text-white-50"></i></span>
+                        <span class="text-white fw-500">1.8 km</span>
+                        <div class="d-none d-md-block ms-auto">
+                            <a href="{% url 'sikayet_et' restoran.id %}"
+                                class="text-white text-decoration-none small opacity-75 hover-opacity-100">
+                                <i class="fas fa-exclamation-triangle me-1"></i> Bildir
+                            </a>
+                        </div>
                     </div>
-                </div>
-                <div class="d-none d-md-block">
-                    <a href="{% url 'sikayet_et' restoran.id %}" class="btn btn-sm btn-outline-light rounded-pill px-3"><i class="fas fa-exclamation-circle me-1"></i> Sorun Bildir</a>
+
+                    <div class="d-flex flex-wrap align-items-center gap-3 mt-3">
+                        <div class="rating-badge">
+                            <i class="fas fa-star"></i> {{ ortalama_puan|default:"0.0" }} ({{ yorum_sayisi }}+)
+                        </div>
+
+                        <div
+                            style="background: #fff3e0; color: #e65100; padding: 6px 14px; border-radius: 8px; font-weight: 600;">
+                            <i class="fas fa-ticket-alt me-1"></i> Yedikçe İndirim
+                        </div>
+
+                        <button class="reviews-btn" onclick="document.getElementById('comments-tab').click()">
+                            <i class="far fa-comment-alt"></i> Yorumlar ({{ yorum_sayisi }})
+                        </button>
+                    </div>
+
+                    <div class="d-flex gap-4 mt-4 pt-3 border-top border-white border-opacity-25 text-white">
+                        <div>
+                            <small class="opacity-75 d-block text-uppercase" style="font-size: 0.7rem;">Çalışma
+                                Saatleri</small>
+                            <span class="fw-bold">11:00-23:59</span>
+                        </div>
+                        <div>
+                            <small class="opacity-75 d-block text-uppercase" style="font-size: 0.7rem;">Min.
+                                Tutar</small>
+                            <span class="fw-bold">150 TL</span>
+                        </div>
+                        <div>
+                            <small class="opacity-75 d-block text-uppercase" style="font-size: 0.7rem;">Teslimat
+                                Süresi</small>
+                            <span class="fw-bold">30-40dk</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <div class="container py-5">
-        <h4 class="fw-bold mb-4 ps-3 border-start border-4 border-warning" style="color: #2d3436;">Popüler Lezzetler</h4>
-        
-        <div class="row g-3">
-            {% for yemek in yemekler %}
-            <div class="col-md-6 col-lg-4">
-                <a href="{% url 'yemek_detay' yemek.id %}" class="food-item-card p-3 shadow-sm">
-                    <div class="d-flex align-items-center">
-                        {% if yemek.resim %}
-                        <img src="{{ yemek.resim }}" style="width: 90px; height: 90px; object-fit: cover; border-radius: 12px;" class="me-3 bg-light">
-                        {% endif %}
-                        
-                        <div class="flex-grow-1 overflow-hidden">
-                            <h6 class="fw-bold mb-1 text-truncate">{{ yemek.isim }}</h6>
-                            <p class="text-muted small mb-2 text-truncate">{{ yemek.icerik|default:"İncelemek için tıklayın." }}</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="food-price">{{ yemek.fiyat }} ₺</span>
-                                <div class="btn-add-mini"><i class="fas fa-plus small"></i></div>
+    <div class="container py-4">
+
+        <!-- Tab Menüsü -->
+        <ul class="nav nav-tabs mb-4 border-bottom-0" id="restaurantTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active fs-5" id="menu-tab" data-bs-toggle="tab" data-bs-target="#menu"
+                    type="button" role="tab" aria-controls="menu" aria-selected="true">Menü</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fs-5" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments"
+                    type="button" role="tab" aria-controls="comments" aria-selected="false">Yorumlar ({{ yorum_sayisi
+                    }})</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="restaurantTabsContent">
+            <!-- MENÜ SEKME İÇERİĞİ -->
+            <div class="tab-pane fade show active" id="menu" role="tabpanel" aria-labelledby="menu-tab">
+                <h5 class="fw-bold mb-4 ps-3 border-start border-4 border-warning" style="color: #2d3436;">Popüler
+                    Lezzetler</h5>
+
+                <div class="row g-3">
+                    {% for yemek in yemekler %}
+                    <div class="col-md-6 col-lg-4">
+                        <a href="{% url 'yemek_detay' yemek.id %}" class="food-item-card p-3 shadow-sm">
+                            <div class="d-flex align-items-center">
+                                {% if yemek.resim %}
+                                <img src="{{ yemek.resim }}"
+                                    style="width: 90px; height: 90px; object-fit: cover; border-radius: 12px;"
+                                    class="me-3 bg-light">
+                                {% endif %}
+
+                                <div class="flex-grow-1 overflow-hidden">
+                                    <h6 class="fw-bold mb-1 text-truncate">{{ yemek.isim }}</h6>
+                                    <p class="text-muted small mb-2 text-truncate">{{ yemek.icerik|default:"İncelemek
+                                        için tıklayın." }}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="food-price">{{ yemek.fiyat }} ₺</span>
+                                        <div class="btn-add-mini"><i class="fas fa-plus small"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center py-5 text-muted">
+                        <i class="fas fa-hamburger fa-3x mb-3 opacity-25"></i>
+                        <p>Henüz menü eklenmemiş.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- YORUMLAR SEKME İÇERİĞİ -->
+            <div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="comments-tab">
+                {% if yorum_sayisi > 0 %}
+                <div class="row g-4">
+                    {% for yorum in yorumlar %}
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm h-100" style="border-radius: 15px;">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <div class="fw-bold">{{ yorum.user.username }}</div>
+                                    <div class="text-warning">
+                                        {% for i in "12345"|make_list %}
+                                        {% if forloop.counter <= yorum.puan %} <i class="fas fa-star"></i>
+                                            {% else %}
+                                            <i class="far fa-star"></i>
+                                            {% endif %}
+                                            {% endfor %}
+                                    </div>
+                                </div>
+                                <p class="text-muted small mb-2">{{ yorum.yorum }}</p>
+                                <small class="text-secondary opacity-75">{{ yorum.tarih|date:"d M Y" }}</small>
                             </div>
                         </div>
                     </div>
-                </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="far fa-comment-dots fa-3x text-muted mb-3 opacity-50"></i>
+                    <p class="text-muted">Henüz değerlendirme yapılmamış.</p>
+                </div>
+                {% endif %}
             </div>
-            {% empty %}
-            <div class="col-12 text-center py-5 text-muted">
-                <i class="fas fa-hamburger fa-3x mb-3 opacity-25"></i>
-                <p>Henüz menü eklenmemiş.</p>
-            </div>
-            {% endfor %}
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

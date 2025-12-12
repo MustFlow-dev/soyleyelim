@@ -1,0 +1,163 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ödeme Yap | Söyleyelim</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #fff5ec 0%, #ffedd5 100%);
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .payment-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            padding: 30px;
+        }
+
+        .card-preview {
+            background: linear-gradient(135deg, #1e1e1e 0%, #3e3e3e 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-control:focus {
+            box-shadow: none;
+            border-color: #27ae60;
+        }
+
+        .btn-pay-now {
+            background-color: #27ae60;
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: bold;
+            width: 100%;
+            transition: 0.3s;
+        }
+
+        .btn-pay-now:hover {
+            background-color: #219150;
+            transform: translateY(-2px);
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="payment-card">
+        <h4 class="fw-bold mb-4 text-center">Kartla Ödeme</h4>
+
+        <!-- Kart Önizleme -->
+        <div class="card-preview position-relative">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <i class="fas fa-wifi text-white-50"></i>
+                <i class="fab fa-cc-mastercard fa-2x"></i>
+            </div>
+            <h4 class="fw-bold mb-4" style="letter-spacing: 2px;" id="cardNumberPreview">•••• •••• •••• ••••</h4>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <small class="text-white-50 d-block" style="font-size: 0.7rem;">KART SAHİBİ</small>
+                    <span class="fw-bold" id="cardNamePreview">AD SOYAD</span>
+                </div>
+                <div>
+                    <small class="text-white-50 d-block" style="font-size: 0.7rem;">SKT</small>
+                    <span class="fw-bold" id="cardDatePreview">MM/YY</span>
+                </div>
+            </div>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label fw-bold small text-muted">Kart Numarası</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0"><i
+                            class="fas fa-credit-card text-success"></i></span>
+                    <input type="text" class="form-control border-start-0 ps-0" id="cardNumberInput"
+                        placeholder="0000 0000 0000 0000" maxlength="19" required>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-6">
+                    <label class="form-label fw-bold small text-muted">Son Kullanma (AA/YY)</label>
+                    <input type="text" class="form-control" id="cardDateInput" placeholder="MM/YY" maxlength="5"
+                        required>
+                </div>
+                <div class="col-6">
+                    <label class="form-label fw-bold small text-muted">CVC</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control border-end-0" placeholder="123" maxlength="3" required>
+                        <span class="input-group-text bg-white border-start-0"><i
+                                class="fas fa-lock text-muted"></i></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-bold small text-muted">Kart üzerindeki isim</label>
+                <input type="text" class="form-control" id="cardNameInput" placeholder="Ad Soyad" required>
+            </div>
+
+            <button type="submit" class="btn btn-pay-now">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>{{ siparis.toplam_tutar }} TL Öde</span>
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </button>
+
+            <div class="text-center mt-3">
+                <a href="javascript:history.back()" class="text-muted small text-decoration-none">İptal Et ve Geri
+                    Dön</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const cardNumInput = document.getElementById('cardNumberInput');
+        const cardNumPreview = document.getElementById('cardNumberPreview');
+        const cardNameInput = document.getElementById('cardNameInput');
+        const cardNamePreview = document.getElementById('cardNamePreview');
+        const cardDateInput = document.getElementById('cardDateInput');
+        const cardDatePreview = document.getElementById('cardDatePreview');
+
+        cardNumInput.addEventListener('input', (e) => {
+            let val = e.target.value.replace(/\D/g, '').substring(0, 16);
+            e.target.value = val.replace(/(.{4})/g, '$1 ').trim();
+            cardNumPreview.innerText = e.target.value || '•••• •••• •••• ••••';
+        });
+
+        cardNameInput.addEventListener('input', (e) => {
+            cardNamePreview.innerText = e.target.value.toUpperCase() || 'AD SOYAD';
+        });
+
+        cardDateInput.addEventListener('input', (e) => {
+            let val = e.target.value.replace(/\D/g, '').substring(0, 4);
+            if (val.length >= 2) val = val.substring(0, 2) + '/' + val.substring(2);
+            e.target.value = val;
+            cardDatePreview.innerText = val || 'MM/YY';
+        });
+    </script>
+
+</body>
+
+</html>

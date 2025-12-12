@@ -83,3 +83,103 @@ class RestoranBasvuru(models.Model):
     class Meta:
         verbose_name = "Restoran Başvurusu"
         verbose_name_plural = "Restoran Başvuruları"
+
+# --- SEPET MODELLERİ ---
+
+from django.contrib.auth.models import User
+
+class Sepet(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, verbose_name="Kullanıcı")
+    session_id = models.CharField(max_length=100, null=True, blank=True, verbose_name="Oturum ID")
+    olusturma_tarihi = models.DateTimeField(auto_now_add=True, verbose_name="Oluşturulma Tarihi")
+    
+    def toplam_tutar(self):
+        # Sepetteki tüm ürünlerin fiyatını toplar
+        toplam = 0
+        for urun in self.sepeturun_set.all():
+            toplam += urun.toplam_fiyat()
+        return toplam
+
+    class Meta:
+        verbose_name = "Sepet"
+        verbose_name_plural = "Sepetler"
+
+    def __str__(self):
+        return f"Sepet {self.id} - {self.user if self.user else self.session_id}"
+
+class SepetUrun(models.Model):
+    sepet = models.ForeignKey(Sepet, on_delete=models.CASCADE, verbose_name="Sepet")
+    yemek = models.ForeignKey(Yemek, on_delete=models.CASCADE, verbose_name="Yemek")
+    adet = models.PositiveIntegerField(default=1, verbose_name="Adet")
+    # Fiyat değişirse sipariş anındaki fiyatı tutmak için eklenebilir ama şimdilik modelden çekelim.
+    
+    def toplam_fiyat(self):
+        return self.yemek.fiyat * self.adet
+
+    class Meta:
+        verbose_name = "Sepet Ürünü"
+        verbose_name_plural = "Sepetteki Ürünler"
+    
+    def __str__(self):
+        return f"{self.yemek.isim} ({self.adet})"
+
+# --- SİPARİŞ MODELLERİ ---
+
+class Siparis(models.Model):
+    DURUM_SECENEKLERI = [
+        ('hazirlaniyor', 'Hazırlanıyor'),
+        ('yolda', 'Yolda'),
+        ('teslim_edildi', 'Teslim Edildi'),
+        ('iptal', 'İptal Edildi'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, verbose_name="Kullanıcı")
+    ad_soyad = models.CharField(max_length=100, verbose_name="Ad Soyad")
+    telefon = models.CharField(max_length=20, verbose_name="Telefon Numarası")
+    adres = models.TextField(verbose_name="Teslimat Adresi")
+    adres_tarifi = models.TextField(blank=True, verbose_name="Adres Tarifi")
+    
+    toplam_tutar = models.DecimalField(max_digits=8, decimal_places=2, verbose_name="Toplam Tutar")
+    olusturma_tarihi = models.DateTimeField(auto_now_add=True, verbose_name="Sipariş Tarihi")
+    durum = models.CharField(max_length=20, choices=DURUM_SECENEKLERI, default='hazirlaniyor', verbose_name="Sipariş Durumu")
+
+    class Meta:
+        verbose_name = "Sipariş"
+        verbose_name_plural = "Siparişler"
+        ordering = ['-olusturma_tarihi']
+
+    def __str__(self):
+        return f"Sipariş #{self.id} - {self.ad_soyad}"
+
+class SiparisUrun(models.Model):
+    siparis = models.ForeignKey(Siparis, on_delete=models.CASCADE, verbose_name="Sipariş")
+    yemek = models.ForeignKey(Yemek, on_delete=models.CASCADE, verbose_name="Yemek")
+    adet = models.PositiveIntegerField(verbose_name="Adet")
+    fiyat = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Birim Fiyat (TL)")
+    
+    def toplam_tutar(self):
+        return self.adet * self.fiyat
+
+    class Meta:
+        verbose_name = "Sipariş Ürünü"
+        verbose_name_plural = "Sipariş Ürünleri"
+
+    def __str__(self):
+        return f"{self.yemek.isim} x {self.adet}"
+
+
+class Yorum(models.Model):
+    siparis = models.OneToOneField(Siparis, on_delete=models.CASCADE, verbose_name="Sipariş")
+    restoran = models.ForeignKey(Restoran, on_delete=models.CASCADE, related_name='yorumlar', verbose_name="Restoran")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Kullanıcı")
+    puan = models.PositiveIntegerField(default=5, verbose_name="Puan (1-5)")
+    yorum = models.TextField(verbose_name="Yorumunuz")
+    tarih = models.DateTimeField(auto_now_add=True, verbose_name="Yorum Tarihi")
+
+    class Meta:
+        verbose_name = "Yorum"
+        verbose_name_plural = "Yorumlar"
+        ordering = ['-tarih']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.restoran.isim} ({self.puan})"

@@ -1,0 +1,290 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sipariş Alındı #{{ siparis.id }} | Söyleyelim</title>
+
+    <link rel="icon"
+        href="https://ui-avatars.com/api/?name=S&background=ff6b00&color=fff&size=128&font-size=0.6&rounded=true"
+        type="image/png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            background-color: #fff3e0;
+            /* Orange-White Background */
+            color: #2d3436;
+            font-family: 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .success-card {
+            background: white;
+            color: #333;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            overflow: hidden;
+            border: 1px solid #ffe0b2;
+        }
+
+        .success-header {
+            background: linear-gradient(135deg, #ff6b00 0%, #ff852e 100%);
+            padding: 40px 20px;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .check-icon {
+            font-size: 80px;
+            animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) both;
+            color: white;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Steps */
+        .order-step {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f1f2f6;
+            color: #a4b0be;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            transition: 0.3s;
+        }
+
+        .step-active .step-icon {
+            background: #ff6b00;
+            color: white;
+            box-shadow: 0 4px 10px rgba(255, 107, 0, 0.3);
+        }
+
+        .step-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #a4b0be;
+        }
+
+        .step-active .step-label {
+            color: #2d3436;
+        }
+
+        /* Progress Line */
+        .progress-line {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            bottom: 20px;
+            width: 2px;
+            background: #f1f2f6;
+            z-index: 1;
+        }
+
+        .progress-fill {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            width: 2px;
+            background: #ff6b00;
+            height: 35%;
+            z-index: 1;
+            transition: height 1s ease;
+        }
+
+        /* Action Buttons */
+        .action-btn {
+            border-radius: 12px;
+            font-weight: 600;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: 0.2s;
+            border: none;
+        }
+
+        .btn-call {
+            background-color: #e67e22;
+            color: white;
+        }
+
+        .btn-call:hover {
+            background-color: #d35400;
+            color: white;
+        }
+
+        .btn-complain {
+            background-color: #ffebee;
+            color: #c0392b;
+        }
+
+        .btn-complain:hover {
+            background-color: #ffcdd2;
+            color: #b71c1c;
+        }
+
+        .btn-pay {
+            background-color: #27ae60;
+            color: white;
+        }
+
+        .btn-pay:hover {
+            background-color: #219150;
+            color: white;
+        }
+
+        /* Busy Status */
+        .busy-status {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container p-3">
+        <div class="success-card mx-auto">
+            <div class="success-header" style="padding: 0; background: #eee; height: 200px; position: relative;">
+                {% if restoran %}
+                {% if restoran.resim_linki %}
+                <img src="{{ restoran.resim_linki }}" alt="{{ restoran.isim }}"
+                    style="width: 100%; height: 100%; object-fit: cover;">
+                <div
+                    style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); padding: 20px; color: white;">
+                    <h4 class="mb-0 fw-bold">{{ restoran.isim }}</h4>
+                </div>
+                {% else %}
+                <div
+                    style="width: 100%; height: 100%; background: linear-gradient(135deg, #ff6b00 0%, #ff852e 100%); display: flex; align-items: flex-end; justify-content: flex-start; padding: 20px;">
+                    <h4 class="mb-0 fw-bold text-white">{{ restoran.isim }}</h4>
+                </div>
+                {% endif %}
+                {% else %}
+                <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #ff6b00 0%, #ff852e 100%);">
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="p-4">
+                <!-- Restoran Yoğunluğu Bilgisi (Bar Şeklinde) -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <small class="fw-bold text-muted">Restoran Yoğunluğu</small>
+                        <small class="fw-bold text-danger">Çok Yoğun</small>
+                    </div>
+                    <div class="progress" style="height: 12px; border-radius: 6px; background-color: #ffe6e6;">
+                        <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated"
+                            role="progressbar" style="width: 85%; box-shadow: 0 0 10px rgba(220, 53, 69, 0.5);"
+                            aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <small class="text-muted" style="font-size: 0.75rem;">Tahmini teslimat süresi uzayabilir.</small>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+                    <div>
+                        <small class="text-muted d-block">Sipariş No</small>
+                        <span class="fw-bold fs-5">#{{ siparis.id }}</span>
+                    </div>
+                    <div class="text-end">
+                        <small class="text-muted d-block">Tahmini Teslimat</small>
+                        <span class="fw-bold fs-5 text-warning">45-55 dk</span>
+                    </div>
+                </div>
+
+                <!-- Takip Adımları Kaldırıldı -->
+
+                <!-- Hızlı İşlemler: Ödeme -->
+                <div class="bg-light p-3 rounded mb-3 border">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="fw-bold text-dark"><i class="fas fa-bolt text-warning me-1"></i> Beklemek İstemiyor
+                            musun?</span>
+                    </div>
+                    <p class="small text-muted mb-2">Sıranın önüne geçmek için temassız ödeme yapabilirsin.</p>
+                    <a href="{% url 'odeme_sayfasi' siparis.id %}"
+                        class="action-btn btn-pay w-100 btn-sm text-decoration-none d-block text-center">
+                        <i class="fas fa-credit-card me-2"></i> Kartla Hemen Öde
+                    </a>
+                </div>
+
+                <!-- Aksiyon Butonları -->
+                <div class="row g-2 mb-4">
+                    <div class="col-6">
+                        <a href="{% url 'restoran_iletisim' siparis.id %}" class="action-btn btn-call w-100">
+                            <i class="fas fa-phone-alt me-2"></i> Restoranı Ara
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <!-- Şimdilik restoran detayına gidip orada şikayet et'e basması yerine doğrudan şikayet sayfasına yönlendirelim -->
+                        <!-- Ancak modelimizde restoran bilgisi sipariş içinde var -->
+                        <!-- siparis.siparisurun_set.first.yemek.restoran.id gibi erişmemiz lazım ama sipariş modelinde restoran yok, ürünlerde var. -->
+                        <!-- Basitleştirmek için siparişin ilk ürününün restoranını alalım -->
+                        <a href="{% url 'sikayet_et' siparis_urunleri.first.yemek.restoran.id %}"
+                            class="action-btn btn-complain w-100">
+                            <i class="fas fa-exclamation-triangle me-2"></i> Şikayet Et
+                        </a>
+                    </div>
+                </div>
+
+                <div class="bg-light p-3 rounded mb-4">
+                    <h6 class="fw-bold mb-3 border-bottom pb-2">Sipariş Detayı</h6>
+                    {% for urun in siparis_urunleri %}
+                    <div class="d-flex justify-content-between font-monospace small mb-1">
+                        <span>{{ urun.adet }}x {{ urun.yemek.isim }}</span>
+                        <span>{{ urun.toplam_tutar }} ₺</span>
+                    </div>
+                    {% endfor %}
+                    <div class="d-flex justify-content-between fw-bold mt-2 pt-2 border-top">
+                        <span>TOPLAM</span>
+                        <span class="text-success">{{ siparis.toplam_tutar }} ₺</span>
+                    </div>
+                </div>
+
+                <a href="{% url 'index' %}" class="btn btn-outline-dark w-100 py-2 rounded-pill fw-bold">
+                    Anasayfaya Dön
+                </a>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

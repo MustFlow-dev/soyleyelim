@@ -33,8 +33,26 @@ urlpatterns = [
     path('giris/', views.giris_yap, name='giris'),
     path('kayit/', views.kayit_ol, name='kayit'),
     path('cikis/', views.cikis_yap, name='cikis'),
+    # ... (User auth URLs)
+    
+    # --- SEPET İŞLEMLERİ ---
+    path('sepet/', views.sepet_detay, name='sepet_detay'),
+    path('sepet/ekle/<int:yemek_id>/', views.sepete_ekle, name='sepete_ekle'),
+    path('sepet/sil/<int:sepet_urun_id>/', views.sepetten_cikar, name='sepetten_cikar'),
+    path('sepet/bosalt/', views.sepeti_bosalt, name='sepeti_bosalt'),
+    
+    # --- SİPARİŞ ONAY VE TAKİP ---
+    path('siparis/tamamla/', views.siparis_olustur, name='siparis_olustur'),
+    path('siparis/takip/<int:id>/', views.siparis_takip, name='siparis_takip'),
+    path('siparis/iletisim/<int:id>/', views.restoran_iletisim, name='restoran_iletisim'),
+    path('siparis/odeme/<int:id>/', views.odeme_sayfasi, name='odeme_sayfasi'),
+    path('siparislerim/', views.siparislerim, name='siparislerim'),
+    path('siparis/yorum-yap/<int:siparis_id>/', views.yorum_yap, name='yorum_yap'),
 ]
 
+
+
 # Resimlerin düzgün çalışması için gerekli ayar (Çok Önemli!)
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

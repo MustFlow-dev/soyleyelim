@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restoranla İletişim | Söyleyelim</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .contact-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .btn-call-action {
+            background-color: #27ae60;
+            color: white;
+            padding: 15px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: 0.3s;
+            width: 100%;
+            display: block;
+            text-decoration: none;
+        }
+
+        .btn-call-action:hover {
+            background-color: #219150;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="contact-card">
+        <div class="mb-4 text-success">
+            <i class="fas fa-phone-volume fa-4x"></i>
+        </div>
+
+        <h3 class="fw-bold mb-2">Restoranla İletişim</h3>
+        <p class="text-muted mb-4">{{ restoran.isim }} ile görüşmek üzeresiniz.</p>
+
+        {% if restoran.telefon %}
+        <a href="tel:{{ restoran.telefon }}" class="btn-call-action">
+            <i class="fas fa-phone me-2"></i> {{ restoran.telefon }} Ara
+        </a>
+        {% else %}
+        <a href="#" class="btn-call-action disabled bg-secondary border-0">
+            <i class="fas fa-phone-slash me-2"></i> Numara Yok
+        </a>
+        {% endif %}
+
+        <div class="mt-4">
+            <a href="javascript:history.back()" class="text-decoration-none text-muted small">
+                <i class="fas fa-arrow-left me-1"></i> Geri Dön
+            </a>
+        </div>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,190 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siparişlerim | Söyleyelim</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: 0.3s;
+            border: 1px solid #eee;
+        }
+
+        .order-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .status-hazirlaniyor {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-yolda {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-teslim_edildi {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-iptal {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container py-5">
+        <div class="d-flex align-items-center mb-4">
+            <a href="{% url 'index' %}" class="btn btn-light rounded-circle me-3"><i class="fas fa-arrow-left"></i></a>
+            <h2 class="fw-bold mb-0">Geçmiş Siparişlerim</h2>
+        </div>
+
+        <div class="row g-4">
+            {% for siparis in siparisler %}
+            <div class="col-md-6 col-lg-4">
+                <div class="order-card p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <span class="text-muted small">#{{ siparis.id }}</span>
+                            <div class="fw-bold fs-5 mt-1">{{ siparis.siparisurun_set.first.yemek.restoran.isim }}</div>
+                        </div>
+                        <span class="status-badge status-{{ siparis.durum }}">
+                            {% if siparis.durum == 'hazirlaniyor' %}Hazırlanıyor
+                            {% elif siparis.durum == 'yolda' %}Yolda
+                            {% elif siparis.durum == 'teslim_edildi' %}Teslim Edildi
+                            {% elif siparis.durum == 'iptal' %}İptal
+                            {% endif %}
+                        </span>
+                    </div>
+
+                    <div class="d-flex align-items-center mb-3 text-secondary small">
+                        <i class="far fa-calendar-alt me-2"></i> {{ siparis.olusturma_tarihi|date:"d M Y, H:i" }}
+                    </div>
+
+                    <div class="border-top pt-3 mt-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold text-dark">{{ siparis.toplam_tutar }} TL</span>
+                            <div class="d-flex gap-2">
+                                {% if siparis.durum == 'teslim_edildi' %}
+                                {% if not siparis.yorum %}
+                                <button type="button" class="btn btn-sm btn-outline-warning rounded-pill px-3"
+                                    data-bs-toggle="modal" data-bs-target="#yorumModal{{ siparis.id }}">
+                                    <i class="far fa-star"></i> Değerlendir
+                                </button>
+
+
+                                {% endif %}
+                                {% endif %}
+                                <a href="{% url 'siparis_takip' siparis.id %}"
+                                    class="btn btn-sm btn-outline-primary rounded-pill px-3">Detaylar</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <i class="fas fa-shopping-basket fa-3x text-muted mb-3 opacity-50"></i>
+                <p class="text-muted">Henüz hiç sipariş vermediniz.</p>
+                <a href="{% url 'index' %}" class="btn btn-primary rounded-pill px-4">Hemen Sipariş Ver</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Modalları Body'nin sonuna ekliyoruz -->
+    {% for siparis in siparisler %}
+    <div class="modal fade" id="yorumModal{{ siparis.id }}" tabindex="-1" aria-hidden="true" style="z-index: 1055;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold">Siparişi Değerlendir</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{% url 'yorum_yap' siparis.id %}" method="POST">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="text-center mb-3">
+                            <div class="rating-stars" id="ratingStars{{ siparis.id }}">
+                                <i class="far fa-star fa-2x text-warning star-item" data-value="1"
+                                    style="cursor: pointer;"></i>
+                                <i class="far fa-star fa-2x text-warning star-item" data-value="2"
+                                    style="cursor: pointer;"></i>
+                                <i class="far fa-star fa-2x text-warning star-item" data-value="3"
+                                    style="cursor: pointer;"></i>
+                                <i class="far fa-star fa-2x text-warning star-item" data-value="4"
+                                    style="cursor: pointer;"></i>
+                                <i class="far fa-star fa-2x text-warning star-item" data-value="5"
+                                    style="cursor: pointer;"></i>
+                            </div>
+                            <input type="hidden" name="puan" id="ratingInput{{ siparis.id }}" value="5">
+                        </div>
+                        <div class="mb-3">
+                            <textarea class="form-control" name="yorum" rows="3"
+                                placeholder="Yemeğin lezzeti ve hız nasıldı?" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="submit" class="btn btn-primary w-100 rounded-pill">Gönder</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.querySelectorAll('.rating-stars').forEach(container => {
+            const stars = container.querySelectorAll('.star-item');
+            const input = container.nextElementSibling; // Hidden input
+
+            stars.forEach((star, index) => {
+                star.addEventListener('click', () => {
+                    const value = index + 1;
+                    input.value = value;
+
+                    // Update visuals
+                    stars.forEach((s, i) => {
+                        if (i < value) {
+                            s.classList.remove('far');
+                            s.classList.add('fas');
+                        } else {
+                            s.classList.remove('fas');
+                            s.classList.add('far');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

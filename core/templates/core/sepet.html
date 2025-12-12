@@ -1,0 +1,188 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sepetim | Söyleyelim</title>
+
+    <link rel="icon"
+        href="https://ui-avatars.com/api/?name=S&background=ff6b00&color=fff&size=128&font-size=0.6&rounded=true"
+        type="image/png">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .cart-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-continue {
+            background-color: #27ae60;
+            color: white;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .btn-continue:hover {
+            background-color: #219150;
+            color: white;
+        }
+
+        .btn-remove {
+            color: #e74c3c;
+            cursor: pointer;
+        }
+
+        .btn-remove:hover {
+            color: #c0392b;
+        }
+
+        .cart-header {
+            background: linear-gradient(135deg, #ff6b00 0%, #ff852e 100%);
+            color: white;
+            border-radius: 15px 15px 0 0;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold text-dark mb-0"><i class="fas fa-shopping-basket me-2 text-warning"></i>Sepetim
+                    </h4>
+                    <a href="{% url 'index' %}" class="btn btn-outline-secondary btn-sm"><i
+                            class="fas fa-arrow-left me-1"></i> Alışverişe Dön</a>
+                </div>
+
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+                {% endif %}
+
+                {% if sepet_urunleri %}
+                <div class="card cart-card mb-4">
+                    <div class="cart-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold fs-5">Ürünler</span>
+                            <a href="{% url 'sepeti_bosalt' %}" class="btn btn-light btn-sm text-danger fw-bold"
+                                onclick="return confirm('Sepeti boşaltmak istediğinize emin misiniz?');">
+                                <i class="fas fa-trash-alt me-1"></i> Sepeti Boşalt
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th class="ps-4">Ürün</th>
+                                        <th class="text-center">Adet</th>
+                                        <th class="text-end pe-4">Fiyat</th>
+                                        <th class="text-end pe-4">İşlem</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for urun in sepet_urunleri %}
+                                    <tr>
+                                        <td class="ps-4">
+                                            <div class="d-flex align-items-center">
+                                                {% if urun.yemek.resim %}
+                                                <img src="{{ urun.yemek.resim }}" class="rounded me-3"
+                                                    style="width: 50px; height: 50px; object-fit: cover;">
+                                                {% else %}
+                                                <div class="rounded bg-light me-3 d-flex align-items-center justify-content-center"
+                                                    style="width: 50px; height: 50px;">
+                                                    <i class="fas fa-hamburger text-secondary"></i>
+                                                </div>
+                                                {% endif %}
+                                                <div>
+                                                    <h6 class="mb-0 fw-bold">{{ urun.yemek.isim }}</h6>
+                                                    <small class="text-muted">{{ urun.yemek.restoran.isim }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-light text-dark border fs-6">{{ urun.adet }}</span>
+                                            <a href="{% url 'sepete_ekle' urun.yemek.id %}" class="text-success ms-1"><i
+                                                    class="fas fa-plus-circle"></i></a>
+                                        </td>
+                                        <td class="text-end pe-4 fw-bold text-dark">
+                                            {{ urun.toplam_fiyat }} ₺
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <a href="{% url 'sepetten_cikar' urun.id %}" class="btn-remove"
+                                                title="Sepetten Çıkar">
+                                                <i class="fas fa-times-circle fs-5"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card cart-card">
+                    <div class="card-body p-4">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <p class="text-muted mb-0 small">Sipariş vererek <a href="#"
+                                        class="text-decoration-none">şartlarımızı</a> kabul etmiş olursunuz.</p>
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <div class="d-flex justify-content-end align-items-center mb-3">
+                                    <span class="text-muted me-3">Genel Toplam:</span>
+                                    <span class="display-6 fw-bold text-success">{{ toplam_tutar }} ₺</span>
+                                </div>
+                                <!-- Şimdilik sipariş ver butonu tekrar sepet detayına gidiyor, ileride sipariş oluşturma sayfasına gidecek -->
+                                <a href="{% url 'siparis_olustur' %}"
+                                    class="btn btn-continue w-100 py-3 shadow-sm text-decoration-none text-center d-block">
+                                    <i class="fas fa-check me-2"></i> Siparişi Tamamla
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% else %}
+
+                <div class="text-center py-5">
+                    <i class="fas fa-shopping-basket fa-4x text-light mb-3" style="color: #dee2e6 !important;"></i>
+                    <h3 class="text-muted fw-bold">Sepetiniz Boş</h3>
+                    <p class="text-muted">Henüz sepetinize bir ürün eklemediniz.</p>
+                    <a href="{% url 'index' %}" class="btn btn-warning text-white fw-bold px-4 py-2 mt-3 shadow-sm">
+                        Hemen Yemek Ara
+                    </a>
+                </div>
+
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

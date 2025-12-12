@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Restoran, Yemek, Secenek, Sikayet, RestoranBasvuru
+from .models import Restoran, Yemek, Secenek, Sikayet, RestoranBasvuru, Siparis, SiparisUrun, Sepet, SepetUrun, Yorum
 
 # --- 1. RESTORAN YÖNETİMİ ---
 @admin.register(Restoran)
@@ -59,5 +59,36 @@ class BasvuruAdmin(admin.ModelAdmin):
 # --- 4. ŞİKAYET YÖNETİMİ ---
 @admin.register(Sikayet)
 class SikayetAdmin(admin.ModelAdmin):
-    # Eğer modelinde bu alanlar yoksa hata almamak için şimdilik 'pass' geçiyoruz
     pass
+
+
+# --- 5. SİPARİŞ ve SEPET YÖNETİMİ ---
+from .models import Sepet, SepetUrun, Siparis, SiparisUrun
+
+class SiparisUrunInline(admin.TabularInline):
+    model = SiparisUrun
+    extra = 0
+    can_delete = False
+
+@admin.register(Siparis)
+class SiparisAdmin(admin.ModelAdmin):
+    list_display = ('id', 'ad_soyad', 'telefon', 'toplam_tutar', 'durum', 'olusturma_tarihi')
+    list_editable = ('durum',)
+    list_filter = ('durum', 'olusturma_tarihi')
+    search_fields = ('ad_soyad', 'telefon', 'adres')
+    inlines = [SiparisUrunInline]
+
+class SepetUrunInline(admin.TabularInline):
+    model = SepetUrun
+    extra = 0
+
+@admin.register(Sepet)
+class SepetAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'session_id', 'olusturma_tarihi')
+    inlines = [SepetUrunInline]
+
+@admin.register(Yorum)
+class YorumAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'restoran', 'puan', 'tarih')
+    list_filter = ('puan', 'tarih')
+    search_fields = ('user__username', 'restoran__isim', 'yorum')
