@@ -596,11 +596,242 @@
             <h1 class="display-5 fw-bold mb-3">Canın ne çekiyor?</h1>
             <div class="row justify-content-center">
                 <div class="col-md-8">
-                    <form class="d-flex search-box shadow-lg">
-                        <input type="text" class="form-control form-control-lg"
-                            placeholder="Yemek veya restoran ara...">
-                        <button type="button">BUL</button>
-                    </form>
+                    <div class="position-relative search-container-wrapper">
+                        <form class="d-flex search-box shadow-lg" action="{% url 'global_search' %}" method="GET"
+                            id="mainSearchForm">
+                            <input type="text" name="q" class="form-control form-control-lg"
+                                placeholder="Yemek veya restoran ara..." id="mainSearchInput" autocomplete="off">
+                            <button type="submit">BUL</button>
+                        </form>
+
+                        <!-- Search Overlay Dropdown -->
+                        <div id="searchOverlay" class="search-overlay shadow-lg rounded-4 d-none">
+                            <div class="p-3">
+                                <!-- Zincir Restoranlar -->
+                                <div class="mb-4">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-store text-danger me-2"></i>
+                                        <h6 class="fw-bold mb-0">Zincir Restoranlar</h6>
+                                    </div>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <a href="{% url 'global_search' %}?q=Komagene"
+                                            class="badge rounded-pill bg-light text-dark text-decoration-none border px-3 py-2 fw-normal hover-scale">Komagene
+                                            Etsiz Çiğ Köfte</a>
+                                        <a href="{% url 'global_search' %}?q=Burger King"
+                                            class="badge rounded-pill bg-light text-dark text-decoration-none border px-3 py-2 fw-normal hover-scale">Burger
+                                            King</a>
+                                        <a href="{% url 'global_search' %}?q=Dominos"
+                                            class="badge rounded-pill bg-light text-dark text-decoration-none border px-3 py-2 fw-normal hover-scale">Domino's
+                                            Pizza</a>
+                                        <a href="{% url 'global_search' %}?q=Starbucks"
+                                            class="badge rounded-pill bg-light text-dark text-decoration-none border px-3 py-2 fw-normal hover-scale">Starbucks</a>
+                                        <a href="{% url 'global_search' %}?q=Popeyes"
+                                            class="badge rounded-pill bg-light text-dark text-decoration-none border px-3 py-2 fw-normal hover-scale">Popeyes</a>
+                                        <a href="{% url 'global_search' %}?q=McDonalds"
+                                            class="badge rounded-pill bg-light text-dark text-decoration-none border px-3 py-2 fw-normal hover-scale">McDonald's</a>
+                                        <a href="{% url 'global_search' %}?q=Pasaport Pizza"
+                                            class="badge rounded-pill bg-light text-dark text-decoration-none border px-3 py-2 fw-normal hover-scale">Pasaport
+                                            Pizza</a>
+                                    </div>
+                                </div>
+
+                                <!-- Mutfaklar -->
+                                <div>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <i class="fas fa-utensils text-warning me-2"></i>
+                                        <h6 class="fw-bold mb-0">Mutfaklar</h6>
+                                    </div>
+                                    <div class="row row-cols-4 row-cols-md-5 g-2 text-center">
+                                        <!-- Mutfak Item: Burger -->
+                                        <div class="col">
+                                            <a href="{% url 'index' %}?cat=Burger"
+                                                class="text-decoration-none text-dark d-block p-2 rounded-3 hover-bg-light h-100 transition-all">
+                                                <div class="bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center mx-auto mb-2"
+                                                    style="width: 50px; height: 50px;">
+                                                    <img src="{% static 'img/burger_icon_3d.png' %}" class="img-fluid"
+                                                        style="width: 32px; height: 32px; object-fit: contain;">
+                                                </div>
+                                                <small class="d-block fw-bold"
+                                                    style="font-size: 0.75rem;">Burger</small>
+                                            </a>
+                                        </div>
+                                        <!-- Mutfak Item: Pizza -->
+                                        <div class="col">
+                                            <a href="{% url 'index' %}?cat=Pizza"
+                                                class="text-decoration-none text-dark d-block p-2 rounded-3 hover-bg-light h-100 transition-all">
+                                                <div class="bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center mx-auto mb-2"
+                                                    style="width: 50px; height: 50px;">
+                                                    <img src="{% static 'img/pizza_icon_3d.png' %}" class="img-fluid"
+                                                        style="width: 32px; height: 32px; object-fit: contain;">
+                                                </div>
+                                                <small class="d-block fw-bold" style="font-size: 0.75rem;">Pizza</small>
+                                            </a>
+                                        </div>
+                                        <!-- Mutfak Item: Döner -->
+                                        <div class="col">
+                                            <a href="{% url 'index' %}?cat=Döner"
+                                                class="text-decoration-none text-dark d-block p-2 rounded-3 hover-bg-light h-100 transition-all">
+                                                <div class="bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center mx-auto mb-2"
+                                                    style="width: 50px; height: 50px;">
+                                                    <img src="{% static 'img/doner_icon_3d.png' %}" class="img-fluid"
+                                                        style="width: 32px; height: 32px; object-fit: contain;">
+                                                </div>
+                                                <small class="d-block fw-bold" style="font-size: 0.75rem;">Döner</small>
+                                            </a>
+                                        </div>
+                                        <!-- Mutfak Item: Kebap -->
+                                        <div class="col">
+                                            <a href="{% url 'index' %}?cat=Kebap"
+                                                class="text-decoration-none text-dark d-block p-2 rounded-3 hover-bg-light h-100 transition-all">
+                                                <div class="bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center mx-auto mb-2"
+                                                    style="width: 50px; height: 50px;">
+                                                    <img src="{% static 'img/kebap_icon_3d.png' %}" class="img-fluid"
+                                                        style="width: 32px; height: 32px; object-fit: contain;">
+                                                </div>
+                                                <small class="d-block fw-bold" style="font-size: 0.75rem;">Kebap</small>
+                                            </a>
+                                        </div>
+                                        <!-- Mutfak Item: Tatlı -->
+                                        <div class="col">
+                                            <a href="{% url 'index' %}?cat=Tatlı"
+                                                class="text-decoration-none text-dark d-block p-2 rounded-3 hover-bg-light h-100 transition-all">
+                                                <div class="bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center mx-auto mb-2"
+                                                    style="width: 50px; height: 50px;">
+                                                    <img src="{% static 'img/dessert_icon_3d.png' %}" class="img-fluid"
+                                                        style="width: 32px; height: 32px; object-fit: contain;">
+                                                </div>
+                                                <small class="d-block fw-bold" style="font-size: 0.75rem;">Tatlı</small>
+                                            </a>
+                                        </div>
+                                        <!-- Mutfak Item: Çiğ Köfte -->
+                                        <div class="col">
+                                            <a href="{% url 'index' %}?cat=Çiğ Köfte"
+                                                class="text-decoration-none text-dark d-block p-2 rounded-3 hover-bg-light h-100 transition-all">
+                                                <div class="bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center mx-auto mb-2"
+                                                    style="width: 50px; height: 50px;">
+                                                    <img src="{% static 'img/cigkofte_icon_3d.png' %}" class="img-fluid"
+                                                        style="width: 32px; height: 32px; object-fit: contain;">
+                                                </div>
+                                                <small class="d-block fw-bold" style="font-size: 0.75rem;">Çiğ
+                                                    Köfte</small>
+                                            </a>
+                                        </div>
+                                        <!-- Mutfak Item: Pide -->
+                                        <div class="col">
+                                            <a href="{% url 'index' %}?cat=Pide"
+                                                class="text-decoration-none text-dark d-block p-2 rounded-3 hover-bg-light h-100 transition-all">
+                                                <div class="bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center mx-auto mb-2"
+                                                    style="width: 50px; height: 50px;">
+                                                    <img src="{% static 'img/pide_icon_3d.png' %}" class="img-fluid"
+                                                        style="width: 32px; height: 32px; object-fit: contain;">
+                                                </div>
+                                                <small class="d-block fw-bold" style="font-size: 0.75rem;">Pide</small>
+                                            </a>
+                                        </div>
+                                        <!-- Mutfak Item: Kahve -->
+                                        <div class="col">
+                                            <a href="{% url 'index' %}?cat=Kahve"
+                                                class="text-decoration-none text-dark d-block p-2 rounded-3 hover-bg-light h-100 transition-all">
+                                                <div class="bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center mx-auto mb-2"
+                                                    style="width: 50px; height: 50px;">
+                                                    <img src="{% static 'img/coffee_icon_3d.png' %}" class="img-fluid"
+                                                        style="width: 32px; height: 32px; object-fit: contain;">
+                                                </div>
+                                                <small class="d-block fw-bold" style="font-size: 0.75rem;">Kahve</small>
+                                            </a>
+                                        </div>
+                                        <!-- Mutfak Item: Sokak Lezzetleri -->
+                                        <div class="col">
+                                            <a href="{% url 'index' %}?cat=Sokak Lezzetleri"
+                                                class="text-decoration-none text-dark d-block p-2 rounded-3 hover-bg-light h-100 transition-all">
+                                                <div class="bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center mx-auto mb-2"
+                                                    style="width: 50px; height: 50px;">
+                                                    <img src="{% static 'img/street_food_icon_3d.png' %}"
+                                                        class="img-fluid"
+                                                        style="width: 32px; height: 32px; object-fit: contain;">
+                                                </div>
+                                                <small class="d-block fw-bold" style="font-size: 0.75rem;">Sokak</small>
+                                            </a>
+                                        </div>
+                                        <!-- Mutfak Item: Ev Yemekleri -->
+                                        <div class="col">
+                                            <a href="{% url 'index' %}?cat=Ev Yemekleri"
+                                                class="text-decoration-none text-dark d-block p-2 rounded-3 hover-bg-light h-100 transition-all">
+                                                <div class="bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center mx-auto mb-2"
+                                                    style="width: 50px; height: 50px;">
+                                                    <img src="{% static 'img/home_food_icon_3d.png' %}"
+                                                        class="img-fluid"
+                                                        style="width: 32px; height: 32px; object-fit: contain;">
+                                                </div>
+                                                <small class="d-block fw-bold" style="font-size: 0.75rem;">Ev
+                                                    Yemeği</small>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <style>
+                        .search-overlay {
+                            position: absolute;
+                            top: 110%;
+                            left: 0;
+                            width: 100%;
+                            background-color: white;
+                            z-index: 1000;
+                            border: 1px solid rgba(0, 0, 0, 0.1);
+                        }
+
+                        .hover-scale {
+                            transition: transform 0.2s;
+                        }
+
+                        .hover-scale:hover {
+                            transform: scale(1.05);
+                            background-color: #f8f9fa !important;
+                        }
+
+                        .hover-bg-light:hover {
+                            background-color: #f8f9fa;
+                        }
+
+                        /* Triangle helper */
+                        .search-overlay::before {
+                            content: '';
+                            position: absolute;
+                            top: -8px;
+                            left: 50px;
+                            width: 16px;
+                            height: 16px;
+                            background-color: white;
+                            transform: rotate(45deg);
+                            border-top: 1px solid rgba(0, 0, 0, 0.1);
+                            border-left: 1px solid rgba(0, 0, 0, 0.1);
+                        }
+                    </style>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const searchInput = document.getElementById('mainSearchInput');
+                            const searchOverlay = document.getElementById('searchOverlay');
+
+                            // Show overlay on focus
+                            searchInput.addEventListener('focus', function () {
+                                searchOverlay.classList.remove('d-none');
+                            });
+
+                            // Remove d-none on click anywhere inside container
+                            // Hide when clicking outside
+                            document.addEventListener('click', function (event) {
+                                const isClickInside = searchInput.contains(event.target) || searchOverlay.contains(event.target);
+                                if (!isClickInside) {
+                                    searchOverlay.classList.add('d-none');
+                                }
+                            });
+                        });
+                    </script>
                 </div>
             </div>
         </div>
@@ -640,27 +871,27 @@
         {% endif %}
 
         <div class="d-flex justify-content-between overflow-auto gap-4 py-3" style="scrollbar-width: none;">
-            <div class="category-item">
+            <div onclick="selectCategory('Burger')" class="category-item text-dark" role="button">
                 <div class="cat-icon"><i class="fas fa-hamburger"></i></div><span
                     class="fw-bold text-secondary small">Burger</span>
             </div>
-            <div class="category-item">
+            <div onclick="selectCategory('Pizza')" class="category-item text-dark" role="button">
                 <div class="cat-icon"><i class="fas fa-pizza-slice"></i></div><span
                     class="fw-bold text-secondary small">Pizza</span>
             </div>
-            <div class="category-item">
+            <div onclick="selectCategory('Tavuk')" class="category-item text-dark" role="button">
                 <div class="cat-icon"><i class="fas fa-drumstick-bite"></i></div><span
                     class="fw-bold text-secondary small">Tavuk</span>
             </div>
-            <div class="category-item">
+            <div onclick="selectCategory('Kebap')" class="category-item text-dark" role="button">
                 <div class="cat-icon"><i class="fas fa-utensils"></i></div><span
                     class="fw-bold text-secondary small">Kebap</span>
             </div>
-            <div class="category-item">
+            <div onclick="selectCategory('Tatlı')" class="category-item text-dark" role="button">
                 <div class="cat-icon"><i class="fas fa-coffee"></i></div><span
                     class="fw-bold text-secondary small">Tatlı</span>
             </div>
-            <div class="category-item">
+            <div onclick="selectCategory('Sağlıklı')" class="category-item text-dark" role="button">
                 <div class="cat-icon"><i class="fas fa-leaf"></i></div><span
                     class="fw-bold text-secondary small">Sağlıklı</span>
             </div>
@@ -672,83 +903,106 @@
 
             <div class="col-lg-3 mb-4">
                 <div class="filter-sidebar">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="filter-title mb-0">Sırala</h5>
-                        <small class="text-muted" style="cursor:pointer">Temizle</small>
-                    </div>
+                    <form id="filterForm" method="GET" action="{% url 'index' %}">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="filter-title mb-0">Sırala</h5>
+                            <a href="{% url 'index' %}" class="small text-muted text-decoration-none">Temizle</a>
+                        </div>
 
-                    <div class="mb-4">
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="radio" name="sortOrder" id="sortRec" checked>
-                            <label class="form-check-label" for="sortRec">Önerilen</label>
-                        </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="radio" name="sortOrder" id="sortPoint">
-                            <label class="form-check-label" for="sortPoint">Puana Göre</label>
-                        </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="radio" name="sortOrder" id="sortTime">
-                            <label class="form-check-label" for="sortTime">Teslimat Süresine Göre</label>
-                        </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="radio" name="sortOrder" id="sortDiscount">
-                            <label class="form-check-label" for="sortDiscount">İndirimli Olanlar</label>
-                        </div>
-                    </div>
 
-                    <hr class="text-muted opacity-25">
+                        <div class="mb-4">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="sort" id="sortRec" value="onerilen"
+                                    {% if sort_order == 'onerilen' %}checked{% endif %} onchange="this.form.submit()">
+                                <label class="form-check-label" for="sortRec">Önerilen</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="sort" id="sortPoint" value="puan" {% if sort_order == 'puan' %}checked{% endif %} onchange="this.form.submit()">
+                                <label class="form-check-label" for="sortPoint">Puana Göre</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="sort" id="sortTime" value="teslimat"
+                                    {% if sort_order == 'teslimat' %}checked{% endif %} onchange="this.form.submit()">
+                                <label class="form-check-label" for="sortTime">Teslimat Süresine Göre</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="sort" id="sortDiscount"
+                                    value="indirim" {% if sort_order == 'indirim' %}checked{% endif %}
+                                    onchange="this.form.submit()">
+                                <label class="form-check-label" for="sortDiscount">İndirimli Olanlar</label>
+                            </div>
+                        </div>
 
-                    <h5 class="filter-title mt-4">Mutfaklar</h5>
-                    <div class="input-group mb-3">
-                        <span class="input-group-text bg-light border-end-0"><i
-                                class="fas fa-search text-muted small"></i></span>
-                        <input type="text" class="form-control bg-light border-start-0" placeholder="Mutfak ara..."
-                            style="font-size: 0.9rem;">
-                    </div>
+                        <hr class="text-muted opacity-25">
 
-                    <div class="cuisine-list">
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="catAll" checked>
-                            <label class="form-check-label fw-bold" for="catAll">Tümü</label>
+                        <h5 class="filter-title mt-4">Mutfaklar</h5>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text bg-light border-end-0"><i
+                                    class="fas fa-search text-muted small"></i></span>
+                            <input type="text" name="mutfak_q" class="form-control bg-light border-start-0"
+                                placeholder="Mutfak ara..." style="font-size: 0.9rem;"
+                                value="{{ request.GET.mutfak_q }}">
                         </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="catBurger">
-                            <label class="form-check-label" for="catBurger">Burger</label>
-                        </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="catDoner">
-                            <label class="form-check-label" for="catDoner">Döner</label>
-                        </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="catPizza">
-                            <label class="form-check-label" for="catPizza">Pizza</label>
-                        </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="catKebap">
-                            <label class="form-check-label" for="catKebap">Kebap & Türk Mutfağı</label>
-                        </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="catTavuk">
-                            <label class="form-check-label" for="catTavuk">Tavuk Dünyası</label>
-                        </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="catTatli">
-                            <label class="form-check-label" for="catTatli">Tatlı & Pastane</label>
-                        </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="catPide">
-                            <label class="form-check-label" for="catPide">Pide & Lahmacun</label>
-                        </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="catCigkofte">
-                            <label class="form-check-label" for="catCigkofte">Çiğ Köfte</label>
-                        </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="catUzak">
-                            <label class="form-check-label" for="catUzak">Uzak Doğu</label>
-                        </div>
-                    </div>
 
+                        <div class="cuisine-list">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="catAll" {% if not secili_kategoriler %}checked{% endif %} onclick="selectCategory('')">
+                                <label class="form-check-label fw-bold" for="catAll">Tümü</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="cat" value="Burger" id="catBurger"
+                                    {% if 'Burger' in secili_kategoriler %}checked{% endif %}
+                                    onchange="this.form.submit()">
+                                <label class="form-check-label" for="catBurger">Burger</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="cat" value="Döner" id="catDoner"
+                                    {% if 'Döner' in secili_kategoriler %}checked{% endif %}
+                                    onchange="this.form.submit()">
+                                <label class="form-check-label" for="catDoner">Döner</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="cat" value="Pizza" id="catPizza"
+                                    {% if 'Pizza' in secili_kategoriler %}checked{% endif %}
+                                    onchange="this.form.submit()">
+                                <label class="form-check-label" for="catPizza">Pizza</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="cat" value="Kebap" id="catKebap"
+                                    {% if 'Kebap' in secili_kategoriler %}checked{% endif %}
+                                    onchange="this.form.submit()">
+                                <label class="form-check-label" for="catKebap">Kebap & Türk Mutfağı</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="cat" value="Tavuk" id="catTavuk"
+                                    {% if 'Tavuk' in secili_kategoriler %}checked{% endif %}
+                                    onchange="this.form.submit()">
+                                <label class="form-check-label" for="catTavuk">Tavuk Dünyası</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="cat" value="Tatlı" id="catTatli"
+                                    {% if 'Tatlı' in secili_kategoriler %}checked{% endif %}
+                                    onchange="this.form.submit()">
+                                <label class="form-check-label" for="catTatli">Tatlı & Pastane</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="cat" value="Pide" id="catPide" {% if 'Pide' in secili_kategoriler %}checked{% endif %} onchange="this.form.submit()">
+                                <label class="form-check-label" for="catPide">Pide & Lahmacun</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="cat" value="Çiğ Köfte"
+                                    id="catCigkofte" {% if 'Çiğ Köfte' in secili_kategoriler %}checked{% endif %}
+                                    onchange="this.form.submit()">
+                                <label class="form-check-label" for="catCigkofte">Çiğ Köfte</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="cat" value="Uzak Doğu"
+                                    id="catUzak" {% if 'Uzak Doğu' in secili_kategoriler %}checked{% endif %}
+                                    onchange="this.form.submit()">
+                                <label class="form-check-label" for="catUzak">Uzak Doğu</label>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
 
@@ -761,21 +1015,9 @@
                         <button type="button" data-bs-target="#campaignCarousel" data-bs-slide-to="0"
                             class="active"></button>
                         <button type="button" data-bs-target="#campaignCarousel" data-bs-slide-to="1"></button>
-                        <button type="button" data-bs-target="#campaignCarousel" data-bs-slide-to="2"></button>
                     </div>
                     <div class="carousel-inner">
                         <div class="carousel-item active" data-bs-interval="3000">
-                            <!-- Reverted to Standard Dark Gradient, fixed position for Burger -->
-                            <div class="festival-slide-bg">
-                                <div class="w-75 text-white">
-                                    <span class="badge bg-warning text-dark mb-2 shadow-sm">FIRSAT</span>
-                                    <h2 class="fw-bold display-6 text-shadow">Burger Festivali!</h2>
-                                    <p class="mb-0 fs-5 text-shadow">Seçili burger restoranlarında %50'ye
-                                        varan<br>indirimler.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="carousel-item" data-bs-interval="3000">
                             <!-- Reverted Market Slide -->
                             <div class="market-slide-bg">
                                 <div class="w-75 text-white">
@@ -978,76 +1220,58 @@
                 <div class="col-md-3 mb-4">
                     <h5 class="footer-title">Söyleyelim</h5>
                     <ul class="footer-links">
+                        <li><a href="#">Hakkımızda</a></li>
+                        <li><a href="#">Kariyer</a></li>
+                        <li><a href="#">Teknoloji</a></li>
+                        <li><a href="#">Sosyal Sorumluluk</a></li>
                         <li><a href="#">İletişim</a></li>
-                        <li><a href="#" style="opacity: 0.7;">Söyleyelim Kurye Başvuru</a></li>
                     </ul>
-
-                    <div class="mt-4">
-                        <a href="#" class="d-block mb-2">
-                            <!-- Using a placeholder for App Store badge -->
-                            <div
-                                style="background: black; border: 1px solid #444; border-radius: 8px; padding: 5px 12px; display: inline-flex; align-items: center; color: white; min-width: 160px; height: 55px; transition: transform 0.2s;">
-                                <i class="fab fa-apple fa-2x me-3"></i>
-                                <div style="line-height: 1.2;">
-                                    <small style="font-size: 10px; opacity: 0.8;">App Store'dan</small><br>
-                                    <span style="font-weight: bold; font-size: 14px;">İndirin</span>
-                                </div>
-                            </div>
-                        </a>
-                        <a href="#" class="d-block">
-                            <!-- Using a placeholder for Google Play badge -->
-                            <div
-                                style="background: black; border: 1px solid #444; border-radius: 8px; padding: 5px 12px; display: inline-flex; align-items: center; color: white; min-width: 160px; height: 55px; transition: transform 0.2s;">
-                                <i class="fab fa-google-play fa-xl me-3"></i>
-                                <div style="line-height: 1.2;">
-                                    <small style="font-size: 10px; opacity: 0.8;">Google Play</small><br>
-                                    <span style="font-weight: bold; font-size: 14px;">'DEN İNDİRİN</span>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
                 </div>
-
                 <div class="col-md-3 mb-4">
-                    <h5 class="footer-title">Sosyal Medya</h5>
-                    <div class="d-flex gap-3">
-                        <a href="https://www.instagram.com/soyleyelim" target="_blank"
-                            class="social-icon-btn instagram">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="https://twitter.com/soyleyelim" target="_blank" class="social-icon-btn twitter">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="https://www.linkedin.com/company/soyleyelim" target="_blank"
-                            class="social-icon-btn linkedin">
-                            <i class="fab fa-linkedin-in"></i>
-                        </a>
-                        <a href="https://www.youtube.com/soyleyelim" target="_blank" class="social-icon-btn youtube">
-                            <i class="fab fa-youtube"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="col-md-3 mb-4">
-                    <!-- Empty column for spacing if needed or future use -->
-                </div>
-
-                <div class="col-md-3 mb-4">
-                    <h5 class="footer-title">Hakkımızda</h5>
+                    <h5 class="footer-title">Yardım</h5>
                     <ul class="footer-links">
-                        <li><a href="{% url 'biz_kimiz' %}">Biz Kimiz</a></li>
+                        <li><a href="#">Sıkça Sorulan Sorular</a></li>
+                        <li><a href="#">Canlı Destek</a></li>
+                        <li><a href="#">Öneri ve Şikayet</a></li>
+                        <li><a href="{% url 'kvkk' %}">Kişisel Verilerin Korunması</a></li>
                         <li><a href="{% url 'kullanim_kosullari' %}">Kullanım Koşulları</a></li>
-                        <li><a href="{% url 'kvkk' %}">KVKK ve Gizlilik Politikası</a></li>
                         <li><a href="{% url 'cerez_politikasi' %}">Çerez Politikası</a></li>
                     </ul>
                 </div>
+                <div class="col-md-3 mb-4">
+                    <h5 class="footer-title">İş Ortaklarımız</h5>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'partner' %}">Restoran Sahibi Ol</a></li>
+                        <li><a href="#">Kurye Ol</a></li>
+                        <li><a href="#">İşletme Girişi</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5 class="footer-title">Bizi Takip Edin</h5>
+                    <div class="d-flex gap-3 mt-3">
+                        <a href="#" class="social-icon-btn instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon-btn twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon-btn linkedin"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-icon-btn youtube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                    <div class="app-badges mt-4">
+                        <a href="#" class="d-inline-block mb-2"><img
+                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/2560px-Google_Play_Store_badge_EN.svg.png"
+                                alt="Google Play" style="height: 35px;"></a>
+                        <a href="#" class="d-inline-block"><img
+                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Download_on_the_App_Store_Badge.svg/2560px-Download_on_the_App_Store_Badge.svg.png"
+                                alt="App Store" style="height: 35px;"></a>
+                    </div>
+                </div>
             </div>
         </div>
-
         <div class="copyright text-center">
             <div class="container">
-                <p class="mb-0">&copy; 2025 Söyleyelim Elektronik Ticaret Hizmetleri ve Yatırımları A.Ş. - Her Hakkı
-                    Saklıdır.</p>
+                <div class="row">
+                    <div class="col-md-12">
+                        &copy; 2024 Söyleyelim. Tüm hakları saklıdır.
+                    </div>
+                </div>
             </div>
         </div>
     </footer>

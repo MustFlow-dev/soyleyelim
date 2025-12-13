@@ -2,13 +2,47 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
-from django.db.models import Avg
+from django.db.models import Avg, Q
 from .models import Restoran, Yemek, RestoranBasvuru, Siparis, SiparisUrun, Sepet, SepetUrun, Yorum 
 
 # --- ANASAYFA ---
+# --- ANASAYFA ---
 def index(request):
-    restoranlar = Restoran.objects.all()
+    restoranlar = Restoran.objects.all().distinct()
+
+    # --- FİLTRELEME ---
+    # 1. Kategoriler (Sidebar'dan veya Üst Menüden)
+    # URL'de ?cat=Burger&cat=Pizza gibi gelebilir (getlist)
+    secili_kategoriler = request.GET.getlist('cat')
+    if secili_kategoriler and 'Tümü' not in secili_kategoriler:
+        # Seçili kategorilerden herhangi birini içeren restoranları getir
+        query = Q()
+        for k in secili_kategoriler:
+            query |= Q(isim__icontains=k) | Q(aciklama__icontains=k) | Q(yemek__isim__icontains=k)
+        restoranlar = restoranlar.filter(query).distinct()
+
+    # 2. Arama (Sidebar Mutfak Arama)
+    mutfak_ara = request.GET.get('mutfak_q')
+    if mutfak_ara:
+        restoranlar = restoranlar.filter(
+            Q(isim__icontains=mutfak_ara) | 
+            Q(aciklama__icontains=mutfak_ara)
+        ).distinct()
+
+    # --- SIRALAMA ---
+    sort_order = request.GET.get('sort', 'onerilen')
     
+    if sort_order == 'puan':
+        # Yorum puan ortalamasına göre azalan
+        restoranlar = restoranlar.annotate(avg_puan=Avg('yorum__puan')).order_by('-avg_puan')
+    elif sort_order == 'teslimat':
+        # Veritabanında teslimat süresi yok, ID'ye göre tersten (yeni eklenenler hızlı gibi :D)
+        restoranlar = restoranlar.order_by('-id')
+    elif sort_order == 'indirim':
+        # Açıklamasında 'indirim' geçenleri öne al
+        restoranlar = restoranlar.filter(aciklama__icontains='indirim')
+    # onerilen ise varsayılan sıralama kalır
+
     # Favorileri al
     favori_ids = []
     if request.user.is_authenticated:
@@ -16,7 +50,9 @@ def index(request):
 
     context = {
         'restoranlar': restoranlar,
-        'favori_ids': list(favori_ids) # Template'de "in" operatörü için listeye çeviriyoruz
+        'favori_ids': list(favori_ids),
+        'secili_kategoriler': secili_kategoriler,
+        'sort_order': sort_order
     }
     return render(request, 'core/index.html', context)
 
@@ -155,10 +191,20 @@ def cikis_yap(request):
 # --- RESTORAN ARAMA (İLETİŞİM SAYFASI) ---
 def restoran_ara(request, id):
     restoran = get_object_or_404(Restoran, id=id)
-    
-    # Redirect yerine render kullanıyoruz.
-    # 'core/iletisim.html' senin az önce attığın HTML dosyasının adı olmalı.
     return render(request, 'core/iletisim.html', {'restoran': restoran})
+
+# --- GENEL ARAMA (YENİ) ---
+def global_search(request):
+    query = request.GET.get('q')
+    results = []
+    if query:
+        # İsimde VEYA (yemek isminde) geçen restoranlar
+        results = Restoran.objects.filter(
+            Q(isim__icontains=query) | 
+            Q(yemek__isim__icontains=query)
+        ).distinct()
+    
+    return render(request, 'core/search_results.html', {'results': results, 'query': query})
 
 # --- SEPET İŞLEMLERİ ---
 

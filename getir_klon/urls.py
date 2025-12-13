@@ -18,6 +18,7 @@ urlpatterns = [
     path('yemek/<int:id>/', views.yemek_detay, name='yemek_detay'),
     
     # --- İŞLEMLER (ARAMA, SİPARİŞ, ŞİKAYET) ---
+    path('ara/', views.global_search, name='global_search'),
     # Restoranı Ara Butonu için (Senin istediğin kısım)
     path('restoran-ara/<int:id>/', views.restoran_ara, name='restoran_ara'),
     # Sipariş Onay Sayfası
