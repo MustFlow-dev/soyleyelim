@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.db.models import Avg, Q
 from .models import Restoran, Yemek, RestoranBasvuru, Siparis, SiparisUrun, Sepet, SepetUrun, Yorum 
+from .forms import RegisterForm 
 
 # --- ANASAYFA ---
 # --- ANASAYFA ---
@@ -54,7 +56,7 @@ def index(request):
         'secili_kategoriler': secili_kategoriler,
         'sort_order': sort_order
     }
-    return render(request, 'core/index.html', context)
+    return render(request, 'core/index_v2.html', context)
 
 # ... (rest of the file until sepet_detay) ...
 
@@ -176,12 +178,51 @@ def partner(request):
 
 # --- KULLANICI İŞLEMLERİ (GİRİŞ/ÇIKIŞ) ---
 def giris_yap(request):
-    # Giriş kodların buradaysa kalabilir (Şu an sadece template render ediyor)
+    if request.method == 'POST':
+        email = request.POST.get('username') # Login formunda name='username' kalsa da placeholder 'E-posta' olacak
+        sifre = request.POST.get('password')
+        
+        if email:
+            email = email.strip() # Boşlukları temizle
+        
+        print(f"DEBUG: Login attempt for email: '{email}'")
+
+        # Email ile giriş yapılıyor
+        try:
+            # Login attempt check (Case insensitive lookup)
+            user_obj = User.objects.filter(email__iexact=email).first()
+            if user_obj:
+                print(f"DEBUG: User found: {user_obj.username} (ID: {user_obj.id})")
+                user = authenticate(request, username=user_obj.username, password=sifre)
+                print(f"DEBUG: Authenticate result: {user}")
+            else:
+                print("DEBUG: User not found with this email.")
+                user = None
+
+            if user is not None:
+                login(request, user)
+                messages.success(request, f"Hoşgeldin {user.first_name}! 👋")
+                return redirect('index')
+            else:
+                messages.error(request, "E-posta adresi veya şifre hatalı.")
+        except Exception as e:
+             print(f"DEBUG: Exception in login: {e}")
+             messages.error(request, "Bir hata oluştu.")
+            
     return render(request, 'core/giris.html')
 
 def kayit_ol(request):
-    # Kayıt kodların buradaysa kalabilir (Şu an sadece template render ediyor)
-    return render(request, 'core/kayit.html')
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user) # Kayıt olunca otomatik giriş yap
+            messages.success(request, "Aramıza hoşgeldin! İlk siparişine özel teslimat bizden. 🛵")
+            return redirect('index')
+    else:
+        form = RegisterForm()
+        
+    return render(request, 'core/kayit.html', {'form': form})
 
 def cikis_yap(request):
     logout(request)
@@ -765,3 +806,43 @@ def kart_sil(request, id):
     kart.delete()
     messages.info(request, 'Kart silindi.')
     return redirect('kayitli_kartlarim')
+
+
+def update_cart_item(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            item_id = data.get('item_id')
+            action = data.get('action') # 'increase' or 'decrease'
+
+            sepet_urun = get_object_or_404(SepetUrun, id=item_id)
+            sepet = _get_cart(request)
+            
+            # Security check
+            if sepet_urun.sepet != sepet:
+                 return JsonResponse({'status': 'error', 'message': 'Unauthorized'}, status=403)
+
+            if action == 'increase':
+                sepet_urun.adet += 1
+                sepet_urun.save()
+            elif action == 'decrease':
+                if sepet_urun.adet > 1:
+                    sepet_urun.adet -= 1
+                    sepet_urun.save()
+                else:
+                    sepet_urun.delete()
+
+            # Recalculate totals
+            sepet_toplam = sepet.toplam_tutar()
+            item_toplam = sepet_urun.toplam_fiyat() if sepet_urun.id else 0
+            
+            return JsonResponse({
+                'status': 'success', 
+                'new_quantity': sepet_urun.adet if sepet_urun.id else 0,
+                'item_total': item_toplam,
+                'cart_total': sepet_toplam
+            })
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+    return JsonResponse({'status': 'error'}, status=400)

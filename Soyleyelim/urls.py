@@ -75,6 +75,7 @@ urlpatterns = [
     path('kayitli-kartlarim/', views.kayitli_kartlarim, name='kayitli_kartlarim'),
     path('kart-ekle/', views.kart_ekle, name='kart_ekle'),
     path('kart-sil/<int:id>/', views.kart_sil, name='kart_sil'),
+    path('api/cart/update/', views.update_cart_item, name='api_cart_update'),
 ]
 
 

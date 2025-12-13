@@ -27,7 +27,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'getir_klon.urls'
+ROOT_URLCONF = 'Soyleyelim.urls'
 
 TEMPLATES = [
     {
@@ -47,7 +47,7 @@ TEMPLATES = [
 ]
 
 
-WSGI_APPLICATION = 'getir_klon.wsgi.application'
+WSGI_APPLICATION = 'Soyleyelim.wsgi.application'
 
 DATABASES = {
     'default': {
